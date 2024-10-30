@@ -36,57 +36,49 @@ Clone notebooks repo.
 
 ### YOLO TO MQ
 
-## Lab Module 2 - Copilot for Predictive Analytics
+## Lab Module - Copilot for Predictive Analytics
 
-## Lab Module 3 - Deploy a computer vision solution at the edge
+## Lab Module - Deploy a computer vision solution at the edge
 
-### Arc-enable a Kubernetes cluster
+In this lab, you have access to an Ubu 22.04 LTS server with XX processors and XX memory. You will use as an edge Kubernetes host for running our industrial AI solution. To save a little time, the server has already been configured with Rancher K3s. Let's take a look at the environment now. Click on Ubuntu Server and login using the provided credentials.
 
-We will simulate an edge-based Kubernetes cluster by using virtualization. Let's go ahead and open Azure cloud shell by clicking on the !IMAGE[3mduomrb.jpg](instructions275881/3mduomrb.jpg) icon in the top right. Select **Bash** as your environment and create a storage account to go with it as shown in the screenshot.
+!IMAGE[Ubuntu]()
 
-!IMAGE[5sapho2w.jpg](instructions275881/5sapho2w.jpg)
-
-!IMAGE[x20cjpfh.jpg](instructions275881/x20cjpfh.jpg)
-
-Once Cloud shell is open type the following command and create a resource group to work in.
-
-    az group create -n rg-Edge -l eastus2
-
-Cool. Now let's create a new group and deploy a new Ubuntu VM, which will take a few minutes to provision.
-    
-    az vm create -g rg-Edge \
-    --name vm-Edge \
-    --image Ubuntu2204 \
-    --size Standard_d16s_v5 \
-    --assign-identity \
-    --role "Contributor" \
-    --scope "/subscriptions/@lab.CloudSubscription.Id/resourcegroups/rg-Edge" \
-    --generate-ssh-keys
-
-Now that the VM is provisioned, let's deploy a custom script extension on it that configures it as a Rancher K3s cluster.
-
-    az vm extension set \
-    --resource-group rg-Edge \
-    --vm-name vm-Edge \
-    --name customScript \
-    --publisher Microsoft.Azure.Extensions \
-    --settings '{"fileUris":["https://raw.githubusercontent.com/dkirby-ms/MiscARM/refs/heads/main/installk3s.sh"], "commandToExecute":"sh installk3s.sh rg-edge"}'
-
-Once this script extension completes its job successfully you will have a Rancher K3s cluster ready to work with on the Ubuntu VM. Now we can remote into the VM and take a look around. Close Cloud shell and navigate to your Virtual machine in the Azure portal, select "Connect" and then connect using the 'SSH using Azure CLI' option. 
-
-!IMAGE[rerlw7an.jpg](instructions275881/rerlw7an.jpg)
-
-Once you are in the VM let's confirm that Kubernetes is running. 
+Once you're in, use kubectl to check the status of the nodes of the cluster. 
 
     kubectl get nodes
 
-Now login to Azure from inside the Ubuntu VM using a device code. Select the default subscription when prompted.
+Great, now let's check the running pods.
 
-    az login --use-device-code
+    kubectl get pods -A
+
+!Image[pods]()
+
+    az connectedk8s connect -n arc-k3s -g rg-Edge --enable-oidc-issuer --enable-workload-identity
+
+!Image[arck3s]()
+
+Now run this script to prep the cluster for AIO.
+
+    ```bash
+    export ISSUER_URL_ID=$(az connectedk8s show --resource-group $RESOURCE_GROUP --name $CLUSTER_NAME --query oidcIssuerProfile.issuerUrl --output tsv)
+
+    #Enabling Service Account in k3s:
+    {
+    echo "kube-apiserver-arg:"
+    echo " - service-account-issuer=$ISSUER_URL_ID"
+    echo " - service-account-max-token-expiration=24h"
+    } | sudo tee -a /etc/rancher/k3s/config.yaml > /dev/null
+
+    export OBJECT_ID=$(az ad sp show --id bc313c14-388c-4e7d-a58e-70017303ee3b --query id -o tsv)
+    az connectedk8s enable-features -n $CLUSTER_NAME -g $RESOURCE_GROUP --custom-locations-oid $OBJECT_ID --features cluster-connect custom-locations
+
+    sudo systemctl restart k3s
+    ```
 
 ### Deploy Azure IOT Operations
 
-Now we will deploy Azure IOT Operations on our Arc-enabled cluster. 
+Now we will deploy Azure IOT Operations on our Arc-enabled cluster.
 
 First install the CLI extension for Azure IOT Operations (AIO).
 
@@ -96,20 +88,31 @@ Now create a storage account that we will use with AIO.
 
 Leave cloud shell open and go back to Azure portal and enter "Azure IoT Operations" in the search box and select it.
 
-### Deploy the backend systems
+### Send data to MQ
 
-    kubectl apply -f mssql.yaml
-    kubectl apply -f influxdb.yaml
-    kubectl apply -f mssql-seutp.yaml
-    kubectl apply -f influxdb-setup.yaml
+We can use a local MQTT client to easily check that messages are being sent to the AIO MQ broker. First let's identity the service where the MQ broker is listening. Run the following command.
 
-### Deploy inferencing APIs
+    kubectl get svc -n azure-iot-operations
+
+Get the IP address of the service called mq-broker-insecure. We will use this address in the next step. Open up MQTT Explorer by clicking the icon on the desktop.
+
+!IMAGE[MQTTexplorer.jpg]()
+
+### Setup video streams
+
+Use kubectl to deploy containers that provide a "virtual" RTSP feed. 
+    kubectl apply -f rtsp.yaml
+
+### Deploy footfall inferencing API
+
+    kubectl apply -f 
+
+### Confirm that messages being generated on MQ.
 
     kubectl apply -f footfall.yaml
     kubectl apply -f shopper-analytics.yaml
 
 ### Deploy 
-
 
 !!Screenshot
 
