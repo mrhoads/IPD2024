@@ -56,6 +56,8 @@ Great, now let's check the running pods.
 
     az connectedk8s connect -n arc-k3s -g rg-Edge --enable-oidc-issuer --enable-workload-identity
 
+    !!!Knowledge - You may need to run this command if you see an error message trying to download kubectl.
+
 !Image[arck3s]()
 
 Now run this script to prep the cluster for AIO.
@@ -76,6 +78,12 @@ Now run this script to prep the cluster for AIO.
     sudo systemctl restart k3s
     ```
 
+Finally, we can check in Azure portal that our cluster is visible as a resource.
+
+!Image[Azure portal k3s]()
+
+We are now ready to deploy Azure IOT Operations.
+
 ### Deploy Azure IOT Operations
 
 Now we will deploy Azure IOT Operations on our Arc-enabled cluster.
@@ -84,9 +92,41 @@ First install the CLI extension for Azure IOT Operations (AIO).
 
     az extension add --upgrade --name azure-iot-ops
 
-Now create a storage account that we will use with AIO.
+Next, verify that the host is ready.
 
-Leave cloud shell open and go back to Azure portal and enter "Azure IoT Operations" in the search box and select it.
+    az iot ops verify-host
+
+!IMAGE[aziotopsverify]()
+
+Now create a storage account and keyvault that we will use with Azure IoT Operations. You can run the following script to create the vault and storage account with the correct settings.
+
+    randomstr=$(head /dev/urandom | tr -dc a-z0-9 | head -c 8)
+    sa=ig24prel18${randomstr}
+    AKV_NAME="akvignite"${randomstr}
+    az keyvault create --enable-rbac-authorization --name $AKV_NAME --resource-group $RESOURCE_GROUP
+    export AKV_ID=$(az keyvault show --name $AKV_NAME --resource-group $RESOURCE_GROUP -o tsv --query id)
+
+Next create a schema registry for Azure IoT Operations.
+
+    schemaName=schema${randomstr}
+    az iot ops schema registry create --name $schemaName --resource-group $RESOURCE_GROUP --registry-namespace $sa --sa-resource-id $(az storage account show --name $sa --resource-group $RESOURCE_GROUP -o tsv --query id)
+    export SCHEMA_REGISTRY_RESOURCE_ID=$(az iot ops schema registry show --name $schemaName --resource-group $RESOURCE_GROUP -o tsv --query id)
+
+!!!Knowledge - The schema registry is a synchronized repository in the cloud and at the edge. The schema registry stores the definitions of messages coming from edge assets, and then exposes an API to access those schemas at the edge. Schemas are documents that describe the format of a message and its contents to enable processing and contextualization.
+
+Now you can initialize the cluster for the AIO services. This command  will take a few minutes to complete.
+
+    az iot ops init --cluster $CLUSTER_NAME --resource-group $RESOURCE_GROUP --sr-resource-id $SCHEMA_REGISTRY_RESOURCE_ID
+
+!IMAGE[iotOpsInit]()
+
+Finally, we can deploy the AIO solution. This command will also take some time.
+
+    az iot ops create --name aio-ignite --cluster $CLUSTER_NAME --resource-group $RESOURCE_GROUP --enable-rsync true --add-insecure-listener true
+
+!IMAGE[iotOpsCreate]()
+
+!!!Knowledge - For this lab, we are using an insecure listener for the MQ Broker. In a production environment, you can secure this endpoint using TLS and a certificate.
 
 ### Send data to MQ
 
@@ -106,7 +146,7 @@ Use kubectl to deploy containers that provide a "virtual" RTSP feed.
 ### Deploy footfall inferencing API
 
     kubectl apply -f 
-
+kubec
 ### Confirm that messages being generated on MQ.
 
     kubectl apply -f footfall.yaml
