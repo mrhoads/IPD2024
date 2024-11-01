@@ -14,79 +14,76 @@ Login to your VM with the following credentials...
 
 You are connected to a Windows 11 machine that has been preconfigured with development tools like Visual Studio Code, Azure CLI, kubectl, Azure Data Studio, and more. Throughout this session, you will be using the tools in this environment and in the [Azure portal](https://portal.azure.com/#home) to complete the lab different lab modules.
 
-### Dev environment
+### Module 1 - Build a POC Getting started
 
-Open VS Code and ...
+Open Visual Studio Code to get started by clicking the icon on the desktop. Once its open, click the "Clone Repository" button.
 
-### Azure portal
+!IMAGE[b50tnd3s.jpg](instructions275881/b50tnd3s.jpg)
 
-Navigate to [Azure portal](https://portal.azure.com/#home) and login using the credentials in the Resource tab in the upper left. 
+Enter ```https://github.com/dkirby-ms/IPD2024``` to get the starter code for the labs. Select the default folder location and then click Open to open the cloned repository in Visual Studio Code. 
 
-## Lab Module 1 - Computer vision POC
+!IMAGE[j1skzaee.jpg](instructions275881/j1skzaee.jpg)
 
-Open Visual Studio Code.
+### YOLO on Jupyter
 
-Clone notebooks repo.
-
-### YOLO
+From inside VSCode, open up the cv-image.ipynb and follow the prompts. 
 
 ### YOLO IN ROOM CAMERAS
 
-### MQ / inferencing pipeline
+For this exercise, open up the YOLOLIVE.ipynb and follow the prompts.
 
-### YOLO TO MQ
+### YOLO TO test.mosquitto.org
 
 ## Lab Module - Copilot for Predictive Analytics
 
 ## Lab Module - Deploy a computer vision solution at the edge
 
-In this lab, you have access to an Ubu 22.04 LTS server with XX processors and XX memory. You will use as an edge Kubernetes host for running our industrial AI solution. To save a little time, the server has already been configured with Rancher K3s. Let's take a look at the environment now. Click on Ubuntu Server and login using the provided credentials.
+In this lab, you have access to an Ubuntu 22.04 LTS server with 8 processors and 16GB memory. You will use this as an edge Kubernetes host for running an industrial AI solution. To save a little time, the server has already been configured with Rancher K3s. Let's take a look at the environment now. Click on the PowerShell 7 icon on the desktop to open a terminal.
 
-!IMAGE[Ubuntu]()
+Remote into the Ubuntu server using ssh.
+
+    ssh 192.168.1.100
+
+>[!help]The password is: @lab.VirtualMachine(UbuntuServer22.04).Password
+>[!alert]The IP address of the Ubuntu server may be 192.168.1.101
 
 Once you're in, use kubectl to check the status of the nodes of the cluster. 
 
     kubectl get nodes
 
+!IMAGE[xncv6lf6.jpg](instructions275881/xncv6lf6.jpg)
+
 Great, now let's check the running pods.
 
     kubectl get pods -A
 
-!Image[pods]()
+!IMAGE[znpwctui.jpg](instructions275881/znpwctui.jpg)
 
-    az connectedk8s connect -n arc-k3s -g rg-Edge --enable-oidc-issuer --enable-workload-identity
+If everything looks good then this cluster can be onboarded to Azure with Azure Arc. Login to Azure with a device code. Use the Azure credentials available in the lab guide "Resources" tab.
 
-    !!!Knowledge - You may need to run this command if you see an error message trying to download kubectl.
+    az login --use-device-code
 
-!Image[arck3s]()
+## Onboard K3s to Azure Arc
 
-Now run this script to prep the cluster for AIO.
+Once logged in, use the following command to onboard the kubernetes cluster to Azure with Azure Arc.
 
-    ```bash
-    export ISSUER_URL_ID=$(az connectedk8s show --resource-group $RESOURCE_GROUP --name $CLUSTER_NAME --query oidcIssuerProfile.issuerUrl --output tsv)
+    az connectedk8s connect --name arc-k3s --resource-group rg-Edge --enable-oidc-issuer --enable-workload-identity
 
-    #Enabling Service Account in k3s:
-    {
-    echo "kube-apiserver-arg:"
-    echo " - service-account-issuer=$ISSUER_URL_ID"
-    echo " - service-account-max-token-expiration=24h"
-    } | sudo tee -a /etc/rancher/k3s/config.yaml > /dev/null
+>[!alert]You may need to run this command again if you see an error message trying to download kubectl.
 
-    export OBJECT_ID=$(az ad sp show --id bc313c14-388c-4e7d-a58e-70017303ee3b --query id -o tsv)
-    az connectedk8s enable-features -n $CLUSTER_NAME -g $RESOURCE_GROUP --custom-locations-oid $OBJECT_ID --features cluster-connect custom-locations
+>[!tip]The resource group "rg-Edge" has been pre-created for this lab.
 
-    sudo systemctl restart k3s
-    ```
+It will take a few minutes to onboard the cluster. In the meantime, you can open Azure portal and navigate to your resource group. When the cluster is finished onboarding, you will be able to view it in the portal.
 
-Finally, we can check in Azure portal that our cluster is visible as a resource.
+!IMAGE[5x563n7i.jpg](instructions275881/5x563n7i.jpg)
 
-!Image[Azure portal k3s]()
+Before we can deploy Azure IOT Operations, we need to enable the custom locations feature on the cluster. Run this script to quickly enable the feature.
 
-We are now ready to deploy Azure IOT Operations.
+    ./aio-prep.sh
+
+>[!hint]The password is @lab.VirtualMachine(UbuntuServer22.04).Password
 
 ### Deploy Azure IOT Operations
-
-Now we will deploy Azure IOT Operations on our Arc-enabled cluster.
 
 First install the CLI extension for Azure IOT Operations (AIO).
 
@@ -96,37 +93,43 @@ Next, verify that the host is ready.
 
     az iot ops verify-host
 
-!IMAGE[aziotopsverify]()
+We will need some cloud resources in Azure to use with Azure IoT Operations - a storage account and keyvault. For this lab, the storage account and keyvault have been created to save time. We can get the identifiers of these resources and store them in a shell variable using the next two commands. First get the keyvault id.
 
-Now create a storage account and keyvault that we will use with Azure IoT Operations. You can run the following script to create the vault and storage account with the correct settings.
+    export AKV_ID=$(az keyvault list --query [].id -o tsv)
 
-    randomstr=$(head /dev/urandom | tr -dc a-z0-9 | head -c 8)
-    sa=ig24prel18${randomstr}
-    AKV_NAME="akvignite"${randomstr}
-    az keyvault create --enable-rbac-authorization --name $AKV_NAME --resource-group $RESOURCE_GROUP
-    export AKV_ID=$(az keyvault show --name $AKV_NAME --resource-group $RESOURCE_GROUP -o tsv --query id)
+Next get the storage account.
 
-Next create a schema registry for Azure IoT Operations.
+    export STORAGE=$(az storage account list --resource-group rg-Edge -o tsv --query [].name)
 
-    schemaName=schema${randomstr}
-    az iot ops schema registry create --name $schemaName --resource-group $RESOURCE_GROUP --registry-namespace $sa --sa-resource-id $(az storage account show --name $sa --resource-group $RESOURCE_GROUP -o tsv --query id)
-    export SCHEMA_REGISTRY_RESOURCE_ID=$(az iot ops schema registry show --name $schemaName --resource-group $RESOURCE_GROUP -o tsv --query id)
+>[!hint]If you want to see the values of the variables we just created, you can "echo" them ```echo $STORAGE```, ```echo $AKV_ID```
 
-!!!Knowledge - The schema registry is a synchronized repository in the cloud and at the edge. The schema registry stores the definitions of messages coming from edge assets, and then exposes an API to access those schemas at the edge. Schemas are documents that describe the format of a message and its contents to enable processing and contextualization.
+Now that we have these cloud resources, we can create a schema registry for Azure IoT Operations.
+
+    az iot ops schema registry create --name schema@lab.LabInstance.GlobalId --resource-group rg-Edge --registry-namespace $STORAGE --sa-resource-id $(az storage account show --name $STORAGE --resource-group rg-Edge -o tsv --query id)
+
+We will need the id of the resource we just created in a later step. 
+
+    export SCHEMA_REGISTRY_RESOURCE_ID=$(az iot ops schema registry show --name schema@lab.LabInstance.GlobalId --resource-group rg-Edge -o tsv --query id)
+
+>[!knowledge] The schema registry is a synchronized repository in the cloud and at the edge. The schema registry stores the definitions of messages coming from edge assets, and then exposes an API to access those schemas at the edge. Schemas are documents that describe the format of a message and its contents to enable processing and contextualization.
 
 Now you can initialize the cluster for the AIO services. This command  will take a few minutes to complete.
 
-    az iot ops init --cluster $CLUSTER_NAME --resource-group $RESOURCE_GROUP --sr-resource-id $SCHEMA_REGISTRY_RESOURCE_ID
+    az iot ops init --cluster arc-k3s --resource-group rg-edge --sr-resource-id $SCHEMA_REGISTRY_RESOURCE_ID
 
-!IMAGE[iotOpsInit]()
+!IMAGE[8acn4r2e.jpg](instructions275881/8acn4r2e.jpg)
 
 Finally, we can deploy the AIO solution. This command will also take some time.
 
-    az iot ops create --name aio-ignite --cluster $CLUSTER_NAME --resource-group $RESOURCE_GROUP --enable-rsync true --add-insecure-listener true
+    az iot ops create --name aio-ignite --cluster arc-k3s --resource-group rg-Edge --enable-rsync true --add-insecure-listener true
 
-!IMAGE[iotOpsCreate]()
+!IMAGE[yibsdkr5.jpg](instructions275881/yibsdkr5.jpg)
 
-!!!Knowledge - For this lab, we are using an insecure listener for the MQ Broker. In a production environment, you can secure this endpoint using TLS and a certificate.
+>[!knowledge]For this lab, we are using an insecure listener for the MQ Broker. In a production environment, you can secure this endpoint using TLS and a certificate.
+
+Optionally, you can check the resource group in Azure portal to see the newly created Azure IoT Operations instance.
+
+!IMAGE[aioPortal]()
 
 ### Send data to MQ
 
@@ -136,7 +139,7 @@ We can use a local MQTT client to easily check that messages are being sent to t
 
 Get the IP address of the service called mq-broker-insecure. We will use this address in the next step. Open up MQTT Explorer by clicking the icon on the desktop.
 
-!IMAGE[MQTTexplorer.jpg]()
+!IMAGE[h4989xx3.jpg](instructions275881/h4989xx3.jpg)
 
 ### Setup video streams
 
