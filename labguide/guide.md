@@ -38,7 +38,7 @@ For this exercise, open up the YOLOLIVE.ipynb and follow the prompts.
 
 ## Lab Module - Deploy a computer vision solution at the edge
 
-In this lab, you have access to an Ubuntu 22.04 LTS server with 8 processors and 16GB memory. You will use this as an edge Kubernetes host for running an industrial AI solution. To save a little time, the server has already been configured with Rancher K3s. Let's take a look at the environment now. Click on the PowerShell 7 icon on the desktop to open a terminal.
+In this lab, you have access to an Ubuntu 22.04 LTS server with 8 processors and 16GB memory. You will use this as an edge Kubernetes host for running an industrial AI solution. To save a little time, the server has already been configured with Rancher K3s. Let's take a look at the environment now. Click on the Windows Terminal icon on the desktop to open a shell.
 
 Remote into the Ubuntu server using ssh.
 
@@ -62,6 +62,8 @@ Great, now let's check the running pods.
 If everything looks good then this cluster can be onboarded to Azure with Azure Arc. Login to Azure with a device code. Use the Azure credentials available in the lab guide "Resources" tab.
 
     az login --use-device-code
+
+>[!hint]When prompted, select the default Azure subscription.
 
 ## Onboard K3s to Azure Arc
 
@@ -111,25 +113,21 @@ We will need the id of the resource we just created in a later step.
 
     export SCHEMA_REGISTRY_RESOURCE_ID=$(az iot ops schema registry show --name schema@lab.LabInstance.GlobalId --resource-group rg-Edge -o tsv --query id)
 
->[!knowledge] The schema registry is a synchronized repository in the cloud and at the edge. The schema registry stores the definitions of messages coming from edge assets, and then exposes an API to access those schemas at the edge. Schemas are documents that describe the format of a message and its contents to enable processing and contextualization.
+>[!knowledge] Schemas are documents that describe the format of a message and its contents to enable processing and contextualization. The schema registry is a synchronized repository in the cloud and at the edge. The schema registry stores the definitions of messages coming from edge assets, and then exposes an API to access those schemas at the edge. The schema registry is backed by a cloud storage account. This storage account was pre-created as part of the lab setup.
 
 Now you can initialize the cluster for the AIO services. This command  will take a few minutes to complete.
 
-    az iot ops init --cluster arc-k3s --resource-group rg-edge --sr-resource-id $SCHEMA_REGISTRY_RESOURCE_ID
+    az iot ops init --cluster arc-k3s --resource-group rg-Edge 
 
 !IMAGE[8acn4r2e.jpg](instructions275881/8acn4r2e.jpg)
 
-Finally, we can deploy the AIO solution. This command will also take some time.
+Finally, we can deploy the AIO solution. This somewhat lengthy command will take some time to type out :)
 
-    az iot ops create --name aio-ignite --cluster arc-k3s --resource-group rg-Edge --enable-rsync true --add-insecure-listener true
+    az iot ops create --name aio-ignite --cluster arc-k3s --resource-group rg-Edge --sr-resource-id $SCHEMA_REGISTRY_RESOURCE_ID --broker-frontend-replicas 1 --broker-frontend-workers 1 --broker-backend-part 1 --broker-backend-workers 1 --broker-backend-rf 2 --broker-mem-profile Low --add-insecure-listener true
 
 !IMAGE[yibsdkr5.jpg](instructions275881/yibsdkr5.jpg)
 
 >[!knowledge]For this lab, we are using an insecure listener for the MQ Broker. In a production environment, you can secure this endpoint using TLS and a certificate.
-
-Optionally, you can check the resource group in Azure portal to see the newly created Azure IoT Operations instance.
-
-!IMAGE[aioPortal]()
 
 ### Send data to MQ
 
@@ -137,29 +135,43 @@ We can use a local MQTT client to easily check that messages are being sent to t
 
     kubectl get svc -n azure-iot-operations
 
-Get the IP address of the service called mq-broker-insecure. We will use this address in the next step. Open up MQTT Explorer by clicking the icon on the desktop.
+The service called mq-broker-insecure is listening on 1883 of the load balancer external IP address. We will use this address in the next step. Open up MQTT Explorer by clicking the icon on the desktop.
 
 !IMAGE[h4989xx3.jpg](instructions275881/h4989xx3.jpg)
 
-### Setup video streams
+### Collect data from industrial assets with a dataflow
 
-Use kubectl to deploy containers that provide a "virtual" RTSP feed. 
-    kubectl apply -f rtsp.yaml
+Deploy a workload that will simulate industrial assets and send data to the MQ Broker. 
+    
+    kubectl apply -f artifacts/simulator.yaml
 
-### Deploy footfall inferencing API
+Go to the Windows desktop and click the MQTT Explorer icon to open it. We can use this program to check the contents of the [MQ Broker](https://learn.microsoft.com/en-us/azure/iot-operations/manage-mqtt-broker/overview-iot-mq).
 
-    kubectl apply -f 
-kubec
-### Confirm that messages being generated on MQ.
+!IMAGE[hlc0jso6.jpg](instructions275881/hlc0jso6.jpg)
 
-    kubectl apply -f footfall.yaml
-    kubectl apply -f shopper-analytics.yaml
+In the host field of the new connection window, enter the IP address you noted earlier with kubectl. Click connect when ready.
 
-### Deploy 
+!IMAGE[86q8kg2a.jpg](instructions275881/86q8kg2a.jpg)
 
-!!Screenshot
+>[!note]Due to the Kubernetes configuration, the IP address will be the same as the IP you used to SSH into the Ubuntu server.
 
-Deploy new instance
+MQTT uses MQTT Topics to organize messages. An MQTT topic is like an address used by the protocol to route messages between publishers and subscribers. Think of it as a specific channel or path where devices can send (publish) and receive (subscribe to) messages. Each topic can have multiple levels separated by slashes, such as home/livingroom/temperature, to organize data more effectivelycan be published to specific topics.
+
+Our simulator is publishing messages to the "iot/devices" topic prefix. You can drill down through the topics to view incoming MQ messages written by the devices to specific MQTT topics.
+
+!IMAGE[4y7o797z.jpg](instructions275881/4y7o797z.jpg)
+
+>[!knowledge]Azure IoT Operations publishes its own self test messages to the azedge topic. This is useful to confirm that the MQ Broker is available and receiving messages.
+
+### Build edge-to-cloud dataflow
+
+[Dataflows](https://learn.microsoft.com/en-us/azure/iot-operations/connect-to-cloud/overview-dataflow) allow you to connect various data sources and perform data operations, simplifying the setup of data paths to move, transform, and enrich data. The dataflow component is part of Azure IoT Operations. The configuration for a dataflow is done via Kubernetes custom resource definitions (CRDs).
+
+You can write configurations for various use cases, such as:
+
+-Transform data and send it back to MQTT
+-Transform data and send it to the cloud
+-Send data to the cloud or edge without transformation
 
 ## Lab Module 3 - Scale the solution
 
