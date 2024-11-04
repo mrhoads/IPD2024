@@ -14,21 +14,35 @@ Login to your VM with the following credentials...
 
 You are connected to a Windows 11 machine that has been preconfigured with development tools like Visual Studio Code, Azure CLI, kubectl, Azure Data Studio, and more. Throughout this session, you will be using the tools in this environment and in the [Azure portal](https://portal.azure.com/#home) to complete the lab different lab modules.
 
-### Module 1 - Build a POC Getting started
+## Module 1 - Computer vision in action
+
+!Intro to computer vision
+
+### Get the starter code
 
 Open Visual Studio Code to get started by clicking the icon on the desktop. Once its open, click the "Clone Repository" button.
 
 !IMAGE[b50tnd3s.jpg](instructions275881/b50tnd3s.jpg)
 
-Enter ```https://github.com/dkirby-ms/IPD2024``` to get the starter code for the labs. Select the default folder location and then click Open to open the cloned repository in Visual Studio Code. 
+Enter ```https://github.com/dkirby-ms/IPD2024``` to get the starter code for the labs. Select the default folder location and then click through the prompts to trust the folder and open the cloned repository in Visual Studio Code.
 
 !IMAGE[j1skzaee.jpg](instructions275881/j1skzaee.jpg)
+
+### 
 
 ### YOLO on Jupyter
 
 From inside VSCode, open up the cv-image.ipynb and follow the prompts. 
 
+### OpenAI on Jupyter
+
+From inside VSCode, open up the cv-image.ipynb and follow the prompts. 
+
 ### YOLO IN ROOM CAMERAS
+
+For this exercise, open up the YOLOLIVE.ipynb and follow the prompts.
+
+### OpenAI IN ROOM CAMERAS
 
 For this exercise, open up the YOLOLIVE.ipynb and follow the prompts.
 
