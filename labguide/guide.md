@@ -45,10 +45,8 @@ For this exercise, open up the YOLOLIVE.ipynb and follow the prompts.
 ### OpenAI IN ROOM CAMERAS
 
 For this exercise, open up the YOLOLIVE.ipynb and follow the prompts.
-
+ear
 ### YOLO TO test.mosquitto.org
-
-## Lab Module - Copilot for Predictive Analytics
 
 ## Lab Module - Deploy a computer vision solution at the edge
 
