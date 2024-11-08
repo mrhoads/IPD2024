@@ -139,54 +139,67 @@ First let's identity the service where the MQ broker is listening. Run the follo
 
     kubectl get svc -n azure-iot-operations
 
-The service called mq-broker-insecure is listening on 1883 of the load balancer external IP address. We will use this address in the next step. 
+> [!note] Please note the **aio-broker-insecure** service for enabling the internal communication with the MQTT broker on port 1883.
 
-#### Step 2 - Connect to the broker with MQTT Explorer
+Deploy a workload that will simulate industrial assets and send data to the MQ Broker.
 
-Open up MQTT Explorer by clicking the icon on the desktop.
+`kubectl apply -f simulator.yaml`
 
-!IMAGE[h4989xx3.jpg](instructions275881/h4989xx3.jpg)
+!IMAGE [simulatordeployment.png](instructions277358/simulatordeployment.png)
 
-We can use this program to check the contents of the [MQ Broker](https://learn.microsoft.com/en-us/azure/iot-operations/manage-mqtt-broker/overview-iot-mq).
+**9. Check topics with MQTT Explorer**
 
-!IMAGE[hlc0jso6.jpg](instructions275881/hlc0jso6.jpg)
+Go to the favourites bar and click the MQTT Explorer icon to open it, and click con **Connect** as indicated in the image. We can use this program to check the contents of the MQTT Broker.
 
-In the host field of the new connection window, enter the IP address you noted earlier with kubectl. Click connect when ready.
+!IMAGE[mqttconfig.png](instructions277358/mqttconfig.png)
 
-!IMAGE[86q8kg2a.jpg](instructions275881/86q8kg2a.jpg)
+MQTT uses MQTT Topics to organize messages. An MQTT topic is like an address used by the protocol to route messages between publishers and subscribers. Think of it as a specific channel or path where devices can send (publish) and receive (subscribe to) messages. Each topic can have multiple levels separated by slashes, such as home/livingroom/temperature, to organize data more effectivelycan be published to specific topics.
 
->[!note]Due to the Kubernetes configuration, the IP address will be the same as the IP you used to SSH into the Ubuntu server.
+Our simulator is publishing messages to the **"iot/devices" topic** prefix. You can drill down through the topics to view incoming MQ messages written by the devices to specific MQTT topics.
 
-#### Step 3 - Confirm MQ broker is available.
+!IMAGE [podinmqttexplorer.png](instructions277358/podinmqttexplorer.png)
 
-Click thru topics
+> [!knowledge] Azure IoT Operations publishes its own self test messages to the azedge topic. This is useful to confirm that the MQ Broker is available and receiving messages.
 
-### Module 2.4 - Explore Dataflows
+***
 
-[Dataflows](https://learn.microsoft.com/en-us/azure/iot-operations/connect-to-cloud/overview-dataflow) allow you to connect various data sources and perform data operations, simplifying the setup of data paths to move, transform, and enrich data. The dataflow component is part of Azure IoT Operations. The configuration for a dataflow is done via Kubernetes custom resource definitions (CRDs).
+## **Module 4 - Transform Data at Scale with Azure IoT Operations**
 
-You can write configurations for various use cases, such as:
+In this module you will learn the following skills:
 
-- Transform data and send it back to MQTT
-- Transform data and send it to the cloud
-- Send data to the cloud or edge without transformation
+* Learn about the Digital Operations Experience portal (DOE).
+* How to use Dataflows to contextualize and send data edge to cloud.
+* Deployment options and examples.
 
-#### Step 2 - Simulate industrial assets telementry
+**Digital Operations Experience**
 
-Deploy a container that will simulate industrial assets and send data to the MQ Broker. 
-    
-    kubectl apply -f artifacts/simulator.yaml
+As part of the Operational Technology rol, Azure IoT Operations has dedicated portal where monitor and manage **Sites** and data transformations with **Dataflows**.
 
-Go back to the MQTT Explorer icon to open it. Our simulator is publishing messages to the "iot/devices" topic prefix. You can drill down through the topics to view incoming MQ messages written by the devices to specific MQTT topics.
+**Sites**
 
-!IMAGE[4y7o797z.jpg](instructions275881/4y7o797z.jpg)
+Azure Arc site manager allows you to manage and monitor your on-premises environments as **Azure Arc sites**. Arc sites are scoped to an Azure resource group or subscription and enable you to track connectivity, alerts, and updates across your environment. The experience is tailored for on-premises scenarios where infrastructure is often managed within a common physical boundary, such as a store, restaurant, or factory.
 
+Please, click on View unassigned instances:
 
-#### Step 3 - Deploy dataflow yaml
+!IMAGE[Sites.png](instructions277358/Sites.png)
 
-## **WIP: Module 4 - Transform Data at Scale with Azure IoT Operations WIP**
+And select your instance from the list:
 
-Dataflows allow you to connect various data sources and perform data operations, simplifying the setup of data paths to move, transform, and enrich data. The dataflow component is part of Azure IoT Operations. The configuration for a dataflow is done via Kubernetes custom resource definitions (CRDs).
+!IMAGE[Sites2.png](instructions277358/Sites2.png)
+
+In this screen, you can check monitoring metrics of the Arc enabled cluster in Sites. Now, let's move to Dataflows on the left panel:
+
+!IMAGE[Sites3.png](instructions277358/Sites3.png)
+
+**Dataflows**
+
+Dataflows is a built-in feature in Azure IoT Operations that allows you to connect various data sources and perform data operations, simplifying the setup of data paths to move, transform, and enrich data.
+As part of Dataflows, Data Processor can be use to perform on-premises transformation in the data either by using Digital Opeartions Experience or via automation.
+
+The configuration for a Dataflow can be done by means of different methods:
+* With Kubernetes and Custom Resource Definitions (CRDs). Changes are only applyed on-prem and don't sync with DOE.
+* Via Bicep automation: Changes are deployed on the Schema Registry and are synced to the edge. (Deployed Dataflows are visible on DOE).
+* Via DOE: Desig your Dataflows and Data Processor Transformations with the UX and synch changes to the edge to perform on-prem contextualization.
 
 You can write configurations for various use cases, such as:
 
@@ -194,51 +207,69 @@ You can write configurations for various use cases, such as:
 * Transform data and send it to the cloud
 * Send data to the cloud or edge without transformation
 
-!IMAGE[Sites.png](instructions277358/Sites.png)
 
-!IMAGE[Sites2.png](instructions277358/Sites2.png)
-
-!IMAGE[Sites3.png](instructions277358/Sites3.png)
+By unsing DOE and the built in Dataflows interface:
 
 !IMAGE[Dataflows1.png](instructions277358/Dataflows1.png)
 
+You can create a new Dataflows selecting the Source, transforming data and selecting the dataflow endpoint:
+
 !IMAGE[df2.png](instructions277358/df2.png)
 
-!IMAGE[df3.png](instructions277358/df3.png)!IMAGE[df4.png](instructions277358/df4.png)
+For the sake of the time and to reduce complexity during this lab, we will generate this dataflows by Bicep automation. This automation will:
 
+* Select a topic from the MQTT simulator we deployed on previous steps
 
-**Assigning 'Azure Event Hubs Data Sender and Receiver roles to EventHub namespace:**
+* Send topic data to Event Hub
 
-Retrieving IoT Operations extension principalId:
+**1. To send the data to Event Hub, we need to retrieve some information on the resources already deployed in your resource group as a pre-requisite:**
 
-`export iotExtensionPrincipalId=$(az k8s-extension list --resource-group $RESOURCE_GROUP --cluster-name $CLUSTER_NAME --cluster-type connectedClusters --query "[?extensionType=='microsoft.iotoperations'].identity.principalId" -o tsv)`
-
-- List all Event Hub Namespaces, Host, and ID in a Resource Group:
+* EventHub Namespace:
 
 `export eventHubNamespace=$(az eventhubs namespace list --resource-group $RESOURCE_GROUP --query '[].name' -o tsv)`
 
+* EventHub Namespace ID:
+
 `export eventHubNamespaceId=$(az eventhubs namespace show --name $eventHubNamespace --resource-group $RESOURCE_GROUP --query id -o tsv)`
+
+* EventHub Hostname:
 
 `export eventHubNamespaceHost="${eventHubNamespace}.servicebus.windows.net:9093"`
 
-- Roles assignment:
+**2. Azure IoT Operations needs to publish and subscribe to this EventHub so we need to grant permissions on the service principal for the MQTT Broker in charge of this task:**
+
+* Retrieving IoT Operations extension Service Principal ID:
+
+`export iotExtensionPrincipalId=$(az k8s-extension list --resource-group $RESOURCE_GROUP --cluster-name $CLUSTER_NAME --cluster-type connectedClusters --query "[?extensionType=='microsoft.iotoperations'].identity.principalId" -o tsv)`
+
+* Assigning Azure Event Hubs Data Sender and Receiver roles to EventHub namespace:
 
 `az role assignment create --assignee $iotExtensionPrincipalId --role "Azure Event Hubs Data Sender" --scope $eventHubNamespaceId`
 
 `az role assignment create --assignee $iotExtensionPrincipalId --role "Azure Event Hubs Data Receiver" --scope $eventHubNamespaceId`
 
-**Get CustomLocationName in a Resource Group:**
+**3. In addition to this, we also need the Custom Locations name and the eventHub in the EventHub Namespace as the parameter of the Bicep file containing the dataflows automation:**
+
+* Get CustomLocationName in a Resource Group:
 
 `export customLocationName=$(az resource list --resource-group $RESOURCE_GROUP --resource-type "Microsoft.ExtendedLocation/customLocations" --query '[].name' -o tsv)`
 
-**List all Event Hubs in a specific namespace:**
+* List all Event Hubs in a specific namespace:
 
-`export eventHubName=$(az eventhubs eventhub list --resource-group $RESOURCE_GROUP --namespace-name $evenHubNamespaceHost --query '[].name' -o tsv)`
+`export eventHubName=$(az eventhubs eventhub list --resource-group $RESOURCE_GROUP --namespace-name $eventHubNamespace --query '[].name' -o tsv)`
 
-**Deploy Dataflows:**
+* Deploy Dataflows:
 
 `export dataflowBicepTemplatePath="dataflows.bicep"`
 
 `az deployment group create --resource-group $RESOURCE_GROUP --template-file $dataflowBicepTemplatePath --parameters aioInstanceName="aio-lab460" eventHubNamespaceHost=$eventHubNamespaceHost eventHubName=$eventHubName customLocationName=$customLocationName`
 
-#### Step 4 - Azure portal
+**4. Check your Dataflows deployment:**
+
+* In DOE and Dataflows:
+
+Please go to the DOE instance and check your new Dataflows:
+
+* In EventHub DataExplorer:
+
+Please go to your Resource Group in Azure Portal and navigate to your EventHub Namespaces. Then click on DataExplorer and select:
