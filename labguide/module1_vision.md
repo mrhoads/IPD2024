@@ -16,7 +16,7 @@ From inside VSCode, open up the ComputerVision.ipynb and follow along with the n
 
 ### **Module 1.2 - Azure OpenAI - GPT4turbo**
 
-From inside VSCode, open up the cv-image.ipynb and follow the prompts. 
+From inside VSCode, open up the cv-image.ipynb and follow the prompts.
 
 ### **Module 1.3 - Object counting**
 

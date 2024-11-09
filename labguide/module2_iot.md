@@ -225,59 +225,20 @@ You can write configurations for various use cases, such as:
 * Transform data and send it to the cloud
 * Send data to the cloud or edge without transformation
 
-#### **Step 4 - Set RBAC on Event Hub**
+#### **Step 3 - Set RBAC to allow Azure IoT Operations to send data to and receive data from Event Hub**
+
+To enable Azure IoT Operations to send and receive data from Event Hub, we need to assign the appropriate roles to its managed identity. Specifically, we must assign the "Azure Event Hubs Data Sender" and "Azure Event Hubs Data Receiver" roles. These roles grant the necessary permissions for data transmission and reception. You can use the Azure CLI to perform these role assignments, but to make this a bit faster we have included a script for you to run. Execute the following command.
+
+`./setRBAC.sh`
+
+!IMAGE[Setting RBAC]()
 
 #### **Step 3 - Create a dataflow endpoint to Azure Event Hub**
 
 First, use Azure CLI to retrieve the values of the Event Hub namespace, resource id, and hostname and store the values in environment variables.
 
-@[Retrieve values][values]
-
-[values]:
-```
-export eventHubNamespace=$(az eventhubs namespace list --resource-group $RESOURCE_GROUP --query '[].name' -o tsv)
-export eventHubNamespaceId=$(az eventhubs namespace show --name $eventHubNamespace --resource-group $RESOURCE_GROUP --query id -o tsv)
-export eventHubNamespaceHost="${eventHubNamespace}.servicebus.windows.net:9093"
-export iotExtensionPrincipalId=$(az k8s-extension list --resource-group $RESOURCE_GROUP --cluster-name $CLUSTER_NAME --cluster-type connectedClusters --query "[?extensionType=='microsoft.iotoperations'].identity.principalId" -o tsv)
-```
-
 #### **Step 5 - Create a dataflow**
 
 
-**2. Azure IoT Operations needs to publish and subscribe to this EventHub so we need to grant permissions on the service principal for the MQTT Broker in charge of this task:**
+#### **Step 6 - View data on Event Hub**
 
-* Retrieving IoT Operations extension Service Principal ID:
-
-`export iotExtensionPrincipalId=$(az k8s-extension list --resource-group $RESOURCE_GROUP --cluster-name $CLUSTER_NAME --cluster-type connectedClusters --query "[?extensionType=='microsoft.iotoperations'].identity.principalId" -o tsv)`
-
-* Assigning Azure Event Hubs Data Sender and Receiver roles to EventHub namespace:
-
-`az role assignment create --assignee $iotExtensionPrincipalId --role "Azure Event Hubs Data Sender" --scope $eventHubNamespaceId`
-
-`az role assignment create --assignee $iotExtensionPrincipalId --role "Azure Event Hubs Data Receiver" --scope $eventHubNamespaceId`
-
-**3. In addition to this, we also need the Custom Locations name and the eventHub in the EventHub Namespace as the parameter of the Bicep file containing the dataflows automation:**
-
-* Get CustomLocationName in a Resource Group:
-
-`export customLocationName=$(az resource list --resource-group $RESOURCE_GROUP --resource-type "Microsoft.ExtendedLocation/customLocations" --query '[].name' -o tsv)`
-
-* List all Event Hubs in a specific namespace:
-
-`export eventHubName=$(az eventhubs eventhub list --resource-group $RESOURCE_GROUP --namespace-name $eventHubNamespace --query '[].name' -o tsv)`
-
-* Deploy Dataflows:
-
-`export dataflowBicepTemplatePath="dataflows.bicep"`
-
-`az deployment group create --resource-group $RESOURCE_GROUP --template-file $dataflowBicepTemplatePath --parameters aioInstanceName="aio-lab460" eventHubNamespaceHost=$eventHubNamespaceHost eventHubName=$eventHubName customLocationName=$customLocationName`
-
-**4. Check your Dataflows deployment:**
-
-* In DOE and Dataflows:
-
-Please go to the DOE instance and check your new Dataflows:
-
-* In EventHub DataExplorer:
-
-Please go to your Resource Group in Azure Portal and navigate to your EventHub Namespaces. Then click on DataExplorer and select:
