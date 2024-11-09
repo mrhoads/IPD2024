@@ -1,17 +1,17 @@
-## Lab 2 - Edge-to-Cloud Industrial IoT
+## **Lab 2 - Edge-to-Cloud Industrial IoT**
 
 In this lab, you have access to an Ubuntu 22.04 LTS server with 8 processors and 16GB memory. You will use this as an edge Kubernetes host for running an industrial AI solution. To save a little time, the server has already been configured with Rancher K3s. Let's take a look at the environment now. Click on the Windows Terminal icon on the desktop to open a shell.
 
-### Module 2.1 - Arc-enable a Rancher K3s cluster
+### **Module 2.1 - Arc-enable a Rancher K3s cluster**
 
-#### Step 1 - Remote into the Ubuntu server using ssh
+#### **Step 1 - Remote into the Ubuntu server using ssh**
 
 `ssh 192.168.1.100`
 
 >[!help]The password is: +++@lab.VirtualMachine(UbuntuServer22.04).Password+++
 >[!alert]The IP address of the Ubuntu server may be 192.168.1.101
 
-#### Step 2 - Check cluster status
+#### **Step 2 - Check cluster status**
 
 Once you're in, use kubectl to check the status of the nodes of the cluster.
 
@@ -33,11 +33,11 @@ If everything looks good then this cluster can be onboarded to Azure with Azure 
 
 >[!hint]When prompted, select the default Azure subscription.
 
-#### Step 3 - Connect the cluster to Azure Arc
+#### **Step 3 - Connect the cluster to Azure Arc**
 
 Once logged in, use the following command to onboard the kubernetes cluster to Azure with Azure Arc.
 
-    az connectedk8s connect --name arc-k3s --resource-group rg-Edge --enable-oidc-issuer --enable-workload-identity
+`az connectedk8s connect --name arc-k3s --resource-group rg-Edge --enable-oidc-issuer --enable-workload-identity`
 
 >[!alert]You may need to run this command again if you see an error message trying to download kubectl.
 
@@ -47,99 +47,99 @@ It will take a few minutes to onboard the cluster. In the meantime, you can open
 
 !IMAGE[5x563n7i.jpg](instructions275881/5x563n7i.jpg)
 
-#### Step 4 - Enable the custom locations feature of the cluster.
+#### **Step 4 - Enable the custom locations feature of the cluster**
 
 Before we can deploy Azure IOT Operations, we need to enable the custom locations feature on the cluster. Run this script to quickly enable the feature.
 
-    ./aio-prep.sh
+`./aio-prep.sh`
 
 >[!hint]The password is @lab.VirtualMachine(UbuntuServer22.04).Password
 
-### Module 2.2 - Deploy Azure IOT Operations
+### **Module 2.2 - Deploy Azure IOT Operations**
 
-#### Step 1 - Prepare to install Azure IOT Operations.
+#### **Step 1 - Prepare to install Azure IOT Operations**
 
 First install the CLI extension for Azure IOT Operations.
 
-    az extension add --upgrade --name azure-iot-ops
+`az extension add --upgrade --name azure-iot-ops`
 
 Next, verify that the host is ready.
 
-    az iot ops verify-host
+`az iot ops verify-host`
 
-#### Step 2 - Prepare to create a schema registry.
+#### **Step 2 - Prepare to create a schema registry**
 
 We will need some cloud resources in Azure to use with Azure IoT Operations including a [schema registry](https://learn.microsoft.com/azure/event-hubs/schema-registry-concepts). For this lab, the storage account and keyvault have been created to save time. We can get the identifiers of these resources and store them in shell variables.
 
 Next get the storage account.
 
-    export STORAGE=$(az storage account list --resource-group rg-Edge -o tsv --query [].name)
+`export STORAGE=$(az storage account list --resource-group rg-Edge -o tsv --query [].name)`
 
 >[!hint]If you want to see the values of the variables we just created, you can "echo" them ```echo $STORAGE```
 
-#### Step 3 - Create a schema registry.
+#### **Step 3 - Create a schema registry**
 
 Now that we have these cloud resources, we can create a schema registry for Azure IoT Operations.
 
-    az iot ops schema registry create --name schema@lab.LabInstance.GlobalId --resource-group rg-Edge --registry-namespace $STORAGE --sa-resource-id $(az storage account show --name $STORAGE --resource-group rg-Edge -o tsv --query id)
+`az iot ops schema registry create --name schema@lab.LabInstance.GlobalId --resource-group rg-Edge --registry-namespace $STORAGE --sa-resource-id $(az storage account show --name $STORAGE --resource-group rg-Edge -o tsv --query id)`
 
-We will need the id of the resource we just created in a later step. 
+We will need the id of the resource we just created in a later step.
 
-    export SCHEMA_REGISTRY_RESOURCE_ID=$(az iot ops schema registry show --name schema@lab.LabInstance.GlobalId --resource-group rg-Edge -o tsv --query id)
+`export SCHEMA_REGISTRY_RESOURCE_ID=$(az iot ops schema registry show --name schema@lab.LabInstance.GlobalId --resource-group rg-Edge -o tsv --query id)`
 
 >[!knowledge] Schemas are documents that describe the format of a message and its contents to enable processing and contextualization. The schema registry is a synchronized repository in the cloud and at the edge. The schema registry stores the definitions of messages coming from edge assets, and then exposes an API to access those schemas at the edge. The schema registry is backed by a cloud storage account. This storage account was pre-created as part of the lab setup.
 
-#### Step 4 - Initialize Azure IoT Operations
+#### **Step 4 - Initialize Azure IoT Operations**
 
 Now you can initialize the cluster for the Azure IoT Operations services. This command  will take a few minutes to complete.
 
-    az iot ops init --cluster arc-k3s --resource-group rg-Edge
+`az iot ops init --cluster arc-k3s --resource-group rg-Edge`
 
 !IMAGE[8acn4r2e.jpg](instructions275881/8acn4r2e.jpg)
 
-#### Step 5 - Deploy Azure IoT Operations
+#### **Step 5 - Deploy Azure IoT Operations**
 
-Next, we can deploy the AIO solution. This somewhat lengthy command will take some time to type out :)
+Next, we can deploy the AIO solution. This somewhat lengthy command will take some time to type out.
 
-    az iot ops create --name aio-ignite --cluster arc-k3s --resource-group rg-Edge --sr-resource-id $SCHEMA_REGISTRY_RESOURCE_ID --broker-frontend-replicas 1 --broker-frontend-workers 1 --broker-backend-part 1 --broker-backend-workers 1 --broker-backend-rf 2 --broker-mem-profile Low --add-insecure-listener true
+`az iot ops create --name aio-ignite --cluster arc-k3s --resource-group rg-Edge --sr-resource-id $SCHEMA_REGISTRY_RESOURCE_ID --broker-frontend-replicas 1 --broker-frontend-workers 1 --broker-backend-part 1 --broker-backend-workers 1 --broker-backend-rf 2 --broker-mem-profile Low --add-insecure-listener true`
 
 !IMAGE[yibsdkr5.jpg](instructions275881/yibsdkr5.jpg)
 
 >[!knowledge]For this lab, we are using an insecure listener for the MQ Broker. In a production environment, you can secure this endpoint using TLS and a certificate.
 
-#### Step 6 - Enable secure settings
+#### **Step 6 - Enable secure settings**
 
 Secrets Management for Azure IoT Operations uses Secret Store extension to sync the secrets from an Azure Key Vault and store them on the edge as Kubernetes secrets. Create a name for the managed identity and store it in an environment variable.
 
-    export USER_ASSIGNED_MI_NAME="aiomi@lab.LabInstance.GlobalId"
+`export USER_ASSIGNED_MI_NAME="aiomi@lab.LabInstance.GlobalId"`
 
 Now create the identity.
 
-    az identity create --name $USER_ASSIGNED_MI_NAME --resource-group rg-Edge
+`az identity create --name $USER_ASSIGNED_MI_NAME --resource-group rg-Edge`
 
 Get the resource ID of the user-assigned managed identity:
 
-    export USER_ASSIGNED_MI_RESOURCE_ID=$(az identity show --name $USER_ASSIGNED_MI_NAME --resource-group rg-Edge --query id --output tsv)
+`export USER_ASSIGNED_MI_RESOURCE_ID=$(az identity show --name $USER_ASSIGNED_MI_NAME --resource-group rg-Edge --query id --output tsv)`
 
 Get the keyvault id.
 
-    export AKV_ID=$(az keyvault list --query [].id -o tsv)
+`export AKV_ID=$(az keyvault list --query [].id -o tsv)`
 
 Finally, enable secret synchronization, using the variables we saved in step 
 
-    az iot ops secretsync enable --name "aio-ignite" --resource-group rg-Edge --mi-user-assigned $USER_ASSIGNED_MI_RESOURCE_ID --kv-resource-id @lab.Variable(Azure_KeyVault_ID)
+`az iot ops secretsync enable --name "aio-ignite" --resource-group rg-Edge --mi-user-assigned $USER_ASSIGNED_MI_RESOURCE_ID --kv-resource-id @lab.Variable(Azure_KeyVault_ID)`
 
-### Module 2.3 - Explore MQTT
+### **Module 2.3 - Explore MQTT**
 
 MQTT uses MQTT Topics to organize messages. An MQTT topic is like an address used by the protocol to route messages between publishers and subscribers. Think of it as a specific channel or path where devices can send (publish) and receive (subscribe to) messages. Each topic can have multiple levels separated by slashes, such as home/livingroom/temperature, to organize data more effectivelycan be published to specific topics.
 
-We can use a local MQTT client to easily check that the [MQ Broker](https://learn.microsoft.com/azure/iot-operations/manage-mqtt-broker/overview-iot-mq) component of Azure IoT Operations is working normally. 
+We can use a local MQTT client to easily check that the [MQ Broker](https://learn.microsoft.com/azure/iot-operations/manage-mqtt-broker/overview-iot-mq) component of Azure IoT Operations is working normally.
 
-#### Step 1 - Get the MQ broker endpoint.
+#### **Step 1 - Get the MQ broker endpoint**
 
 First let's identity the service where the MQ broker is listening. Run the following command.
 
-    kubectl get svc -n azure-iot-operations
+`kubectl get svc -n azure-iot-operations`
 
 > [!note] Please note the **aio-broker-insecure** service for enabling the internal communication with the MQTT broker on port 1883.
 
@@ -149,7 +149,7 @@ Deploy a workload that will simulate industrial assets and send data to the MQ B
 
 !IMAGE [simulatordeployment.png](instructions277358/simulatordeployment.png)
 
-**9. Check topics with MQTT Explorer**
+#### **Step 2 - Check topics with MQTT Explorer**
 
 Go to the favourites bar and click the MQTT Explorer icon to open it, and click con **Connect** as indicated in the image. We can use this program to check the contents of the MQTT Broker.
 
@@ -162,8 +162,6 @@ Our simulator is publishing messages to the **"iot/devices" topic** prefix. You 
 !IMAGE [podinmqttexplorer.png](instructions277358/podinmqttexplorer.png)
 
 > [!knowledge] Azure IoT Operations publishes its own self test messages to the azedge topic. This is useful to confirm that the MQ Broker is available and receiving messages.
-
-***
 
 ## **Module 4 - Transform Data at Scale with Azure IoT Operations**
 
