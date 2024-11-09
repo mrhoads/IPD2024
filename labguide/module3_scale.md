@@ -90,43 +90,36 @@ This dashboard gives insight into the overall health of your Kubernetes cluster.
 
 >[!tip] spend a few minutes exploring this and other dashboards to see the types of information it presents
 
+You can also explore the data through the use of [PromQL queries](https://prometheus.io/docs/prometheus/latest/querying/basics/).  For example, go to Home / Explore.  Change the query to use **code** and enter the following PromQL query (hit Shift+Enter to execute the query):
+
+```
+100 - (avg(rate(node_cpu_seconds_total{mode!="idle"}[5m])) by (instance) * 100 / avg(rate(node_cpu_seconds_total[5m])) by (instance))
+
+```
+![screenshot of PromQL query](../media/image/module3-prom-query.png)
+
+This query calculates the percentage of CPU time spent in non-idle states and subtracts it from 100 to get the idle CPU percentage.  While outside the scope of this lab, writing your own queries will be useful if you instrument your own applications and want to use custom dashboards to view metrics.
 
 
-##Deploy Prometheus to collect cluster metrics.
+## Using Azure Monitor for Cloud-Based Insights
 
-Install Grafana and configure it to pull metrics from Prometheus.
+Azure Monitor provides a comprehensive solution for collecting, analyzing, and acting on telemetry data from resources running directly in Azure as well as on-premises resources. For Arc-enabled Kubernetes clusters, Azure Monitor helps extend observability into the cloud, ensuring you have a centralized view of your cluster's health.
 
-Create Dashboards:
+## Enabling Container Insights
 
-Develop custom dashboards in Grafana to visualize CPU usage, memory utilization, pod health, and more.
+To enable Container Insights for this Arc-enabled Kubernetes cluster, navigate to the Azure Portal and find the cluster yuo onboarded earlier.
 
-Alerting:
+Under the Monitoring blade, find **Insights**.  
 
-Set up alerting rules in Grafana to notify administrators of any performance anomalies or threshold breaches.
+![screenshot of Insights on Arc-enabled Kubernetes cluster](../media/image/module3-container-insights.png).  Click on **Configure monitoring**
 
-Step 2: Leveraging Azure Monitor for Cloud-Based Insights
+De-select **Enable Prometheus metrics** and **Enable Grafana** if checked.  Expand the Advanced Settings at the bottom of the dialogue to see the options you're presented with.  The data generated from Container Insights will be populated to the Log Analytics Workspace selected here.  In addition, note the various presets for Cost Presents.  Kubernetes generates significant amounts of data, so depending on your needs, you can alter the frequency of collection and filter the collection to only specific namespaces.
 
-Azure Monitor provides a comprehensive solution for collecting, analyzing, and acting on telemetry data from your cloud and on-premises environments. For Arc-enabled Kubernetes clusters, Azure Monitor helps extend observability into the cloud, ensuring you have a centralized view of your cluster's health.
+Leave the default settings and click **Configure**
 
-Enable Azure Arc Monitoring:
+![screenshot of configuring Container Insights](../media/image/module3-enable-container-insights.png)
 
-Connect your Arc-enabled Kubernetes cluster to Azure Monitor.
-
-Configure Azure Monitor to collect and analyze logs and metrics from the cluster.
-
-Insights and Analytics:
-
-Utilize Azure Monitor Workbooks to create rich visualizations and analyses of your Kubernetes metrics.
-
-Set up alerts and automated responses based on the telemetry data collected by Azure Monitor.
-
-Health Monitoring:
-
-Monitor the health of your Arc-enabled Kubernetes cluster from the Azure portal.
-
-Use Azure Monitor’s machine learning algorithms to detect and predict issues before they impact your applications.
-
-Conclusion
+TODO: show Insights metrics and graphs, etc.
 
 By integrating Grafana for on-premises observability and Azure Monitor for cloud-based insights, you can ensure comprehensive observability of your Arc-enabled Kubernetes clusters. This dual approach provides flexibility and depth, allowing you to maintain high standards of performance and reliability across diverse environments.
 
