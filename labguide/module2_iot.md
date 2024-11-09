@@ -157,15 +157,15 @@ First let's identity the service where the MQ broker is listening. Run the follo
 
 > [!note] Please note the **aio-broker-insecure** service for enabling the internal communication with the MQTT broker on port 1883.
 
-Deploy a workload that will simulate industrial assets and send data to the MQ Broker.
+#### **Step 2 - Deploy a data simulator**
 
-#### **Step 3 - Check topics with MQTT Explorer**
+We can simulate real industrial assets such as commercial refrigeration and oven units, HVAC systems, Deploy a workload that will simulate industrial assets and send data to the MQ Broker.
 
 `kubectl apply -f simulator.yaml`
 
 !IMAGE [simulatordeployment.png](instructions277358/simulatordeployment.png)
 
-#### **Step 4 - Check topics with MQTT Explorer**
+#### **Step 3 - Check topics with MQTT Explorer**
 
 Go to the favourites bar and click the MQTT Explorer icon to open it, and click con **Connect** as indicated in the image. We can use this program to check the contents of the MQTT Broker.
 
