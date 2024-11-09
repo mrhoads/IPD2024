@@ -209,22 +209,21 @@ In this screen, you can check monitoring metrics of the Arc enabled cluster in S
 
 !IMAGE[Click dataflows](./img/press-dataflows.png)
 
-**Dataflows**
+#### **Step 2 - Configure a Dataflow**
 
-Dataflows is a built-in feature in Azure IoT Operations that allows you to connect various data sources and perform data operations, simplifying the setup of data paths to move, transform, and enrich data.
-As part of Dataflows, Data Processor can be use to perform on-premises transformation in the data either by using Digital Opeartions Experience or via automation.
+Azure IoT Operations provides powerful tools to simplify the creation and management of dataflows, enabling seamless data movement and transformation from edge to cloud. The [Dataflows](https://learn.microsoft.com/azure/iot-operations/connect-to-cloud/overview-dataflow) feature allows you to connect various data sources, perform data operations, and enrich data, making it easier to analyze and gain insights from your IoT data. With [Data Processor](https://learn.microsoft.com/azure/iot-operations/manage-dataflows/data-processor), you can perform on-premises data transformations, ensuring that data is processed and contextualized before being sent to its destination. These capabilities help streamline the setup of data paths, whether you need to move, transform, or enrich data, providing a robust and scalable solution for managing industrial IoT data.
 
-The configuration for a Dataflow can be done by means of different methods:
-* With Kubernetes and Custom Resource Definitions (CRDs). Changes are only applyed on-prem and don't sync with DOE.
-* Via Bicep automation: Changes are deployed on the Schema Registry and are synced to the edge. (Deployed Dataflows are visible on DOE).
-* Via DOE: Desig your Dataflows and Data Processor Transformations with the UX and synch changes to the edge to perform on-prem contextualization.
+The configuration for a Dataflow can be done using several different methods:
+
+* Via Bicep automation: Changes are deployed on the Schema Registry and are synced to the edge.
+* Via DOE: Design your Dataflows and Data Processor Transformations with the UX and synch changes to the edge to perform on-prem contextualization.
+* With Kubernetes and Custom Resource Definitions (CRDs).
 
 You can write configurations for various use cases, such as:
 
 * Transform data and send it back to MQTT
 * Transform data and send it to the cloud
 * Send data to the cloud or edge without transformation
-
 
 By unsing DOE and the built in Dataflows interface:
 
