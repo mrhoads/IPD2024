@@ -87,7 +87,7 @@ Now that we have these cloud resources, we can create a schema registry for Azur
 
 `az iot ops schema registry create --name schema@lab.LabInstance.GlobalId --resource-group rg-Edge --registry-namespace $STORAGE --sa-resource-id $(az storage account show --name $STORAGE --resource-group rg-Edge -o tsv --query id)`
 
-
+!IMAGE[iot init](./img/iotinit.png)
 
 We will need the id of the resource we just created in a later step.
 
@@ -101,7 +101,7 @@ Now you can initialize the cluster for the Azure IoT Operations services. This c
 
 `az iot ops init --cluster arc-k3s --resource-group rg-Edge`
 
-!IMAGE[8acn4r2e.jpg](instructions275881/8acn4r2e.jpg)
+!IMAGE[iot init](./img/iotinit.png)
 
 #### **Step 5 - Deploy Azure IoT Operations**
 
@@ -109,7 +109,7 @@ Next, we can deploy the AIO solution. This somewhat lengthy command will take so
 
 `az iot ops create --name aio-ignite --cluster arc-k3s --resource-group rg-Edge --sr-resource-id $SCHEMA_REGISTRY_RESOURCE_ID --broker-frontend-replicas 1 --broker-frontend-workers 1 --broker-backend-part 1 --broker-backend-workers 1 --broker-backend-rf 2 --broker-mem-profile Low --add-insecure-listener true`
 
-!IMAGE[yibsdkr5.jpg](instructions275881/yibsdkr5.jpg)
+!IMAGE[iot create](./img/iotcreate.png)
 
 >[!knowledge]For this lab, we are using an insecure listener for the MQ Broker. In a production environment, you can secure this endpoint using TLS and a certificate.
 
@@ -122,6 +122,8 @@ Secrets Management for Azure IoT Operations uses Secret Store extension to sync 
 Now create the identity.
 
 `az identity create --name $USER_ASSIGNED_MI_NAME --resource-group rg-Edge`
+
+!IMAGE[Create identity](./img/create_ssmi.png)
 
 Get the resource ID of the user-assigned managed identity:
 
