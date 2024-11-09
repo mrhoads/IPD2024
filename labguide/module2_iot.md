@@ -6,7 +6,7 @@ In this lab, you have access to an Ubuntu 22.04 LTS server with 8 processors and
 
 #### Step 1 - Remote into the Ubuntu server using ssh
 
-```shell
+```
 ssh 192.168.1.100
 ```
 
@@ -17,7 +17,7 @@ ssh 192.168.1.100
 
 Once you're in, use kubectl to check the status of the nodes of the cluster.
 
-```PowerShell
+```
 kubectl get nodes
 ```
 
