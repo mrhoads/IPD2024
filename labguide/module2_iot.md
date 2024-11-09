@@ -6,7 +6,7 @@ In this lab, you have access to an Ubuntu 22.04 LTS server with 8 processors and
 
 #### Step 1 - Remote into the Ubuntu server using ssh
 
-```PowerShell
+```shell
 ssh 192.168.1.100
 ```
 
