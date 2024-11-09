@@ -169,7 +169,7 @@ We can simulate real industrial assets such as commercial refrigeration and oven
 
 Minimize the Terminal window and go to the Windows desktop to find the icon for MQTT Explorer.
 
-!IMAGE[mqttconfig.png](instructions277358/mqttconfig.png)
+!IMAGE[MQTT Icon](./img/mqtticon.png)
 
 Our simulator is publishing messages to the **"iot/devices" topic** prefix. You can drill down through the topics to view incoming MQ messages written by the devices to specific MQTT topics.
 
