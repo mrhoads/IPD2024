@@ -209,7 +209,7 @@ In this screen, you can check monitoring metrics of the Arc enabled cluster in S
 
 !IMAGE[Click dataflows](./img/press-dataflows.png)
 
-#### **Step 2 - Configure a Dataflow**
+#### **Step 2 - Dataflows in Azure IoT Operations experience**
 
 Azure IoT Operations provides powerful tools to simplify the creation and management of dataflows, enabling seamless data movement and transformation from edge to cloud. The [Dataflows](https://learn.microsoft.com/azure/iot-operations/connect-to-cloud/overview-dataflow) feature allows you to connect various data sources, perform data operations, and enrich data, making it easier to analyze and gain insights from your IoT data. With [Data Processor](https://learn.microsoft.com/azure/iot-operations/manage-dataflows/data-processor), you can perform on-premises data transformations, ensuring that data is processed and contextualized before being sent to its destination. These capabilities help streamline the setup of data paths, whether you need to move, transform, or enrich data, providing a robust and scalable solution for managing industrial IoT data.
 
@@ -225,33 +225,24 @@ You can write configurations for various use cases, such as:
 * Transform data and send it to the cloud
 * Send data to the cloud or edge without transformation
 
-By unsing DOE and the built in Dataflows interface:
+#### **Step 4 - Set RBAC on Event Hub**
 
-!IMAGE[Dataflows1.png](instructions277358/Dataflows1.png)
+#### **Step 3 - Create a dataflow endpoint to Azure Event Hub**
 
-You can create a new Dataflows selecting the Source, transforming data and selecting the dataflow endpoint:
+First, use Azure CLI to retrieve the values of the Event Hub namespace, resource id, and hostname and store the values in environment variables.
 
-!IMAGE[df2.png](instructions277358/df2.png)
+@[Retrieve values][values]
 
-For the sake of the time and to reduce complexity during this lab, we will generate this dataflows by Bicep automation. This automation will:
+[values]:
+```
+export eventHubNamespace=$(az eventhubs namespace list --resource-group $RESOURCE_GROUP --query '[].name' -o tsv)
+export eventHubNamespaceId=$(az eventhubs namespace show --name $eventHubNamespace --resource-group $RESOURCE_GROUP --query id -o tsv)
+export eventHubNamespaceHost="${eventHubNamespace}.servicebus.windows.net:9093"
+export iotExtensionPrincipalId=$(az k8s-extension list --resource-group $RESOURCE_GROUP --cluster-name $CLUSTER_NAME --cluster-type connectedClusters --query "[?extensionType=='microsoft.iotoperations'].identity.principalId" -o tsv)
+```
 
-* Select a topic from the MQTT simulator we deployed on previous steps
+#### **Step 5 - Create a dataflow**
 
-* Send topic data to Event Hub
-
-**1. To send the data to Event Hub, we need to retrieve some information on the resources already deployed in your resource group as a pre-requisite:**
-
-* EventHub Namespace:
-
-`export eventHubNamespace=$(az eventhubs namespace list --resource-group $RESOURCE_GROUP --query '[].name' -o tsv)`
-
-* EventHub Namespace ID:
-
-`export eventHubNamespaceId=$(az eventhubs namespace show --name $eventHubNamespace --resource-group $RESOURCE_GROUP --query id -o tsv)`
-
-* EventHub Hostname:
-
-`export eventHubNamespaceHost="${eventHubNamespace}.servicebus.windows.net:9093"`
 
 **2. Azure IoT Operations needs to publish and subscribe to this EventHub so we need to grant permissions on the service principal for the MQTT Broker in charge of this task:**
 
