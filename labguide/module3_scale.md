@@ -17,11 +17,20 @@ Prometheus is an open-source tool that collects and stores metrics from a variet
 
 >[!knowledge] While there is an Azure-native solution, known as [Azure Managed Grafana](https://learn.microsoft.com/en-us/azure/managed-grafana/overview), this lab focuses on self-hosting this solution.
 
-Install Prometheus and Grafana:
+Step 1. SSH into the Ubuntu k3s machine
+
+First, SSH to the k3s machine Step 1 - Remote into the Ubuntu server using ssh.
+
+    ssh 192.168.1.100
+
+>[!help]The password is: @lab.VirtualMachine(UbuntuServer22.04).Password
+>[!alert]The IP address of the Ubuntu server may be 192.168.1.101
+
+Step 2. Install Prometheus and Grafana using Helm
 
 A common way to install these tools is with Helm and the open-source [kube-prometheus-stack](https://github.com/prometheus-community/helm-charts/blob/main/charts/kube-prometheus-stack/README.md).  
 
-```
+```shell
 helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
 helm repo update
 ```
@@ -30,11 +39,38 @@ There are *lots* of different ways to configure this.  Inside VSCode, open artif
 
 ![Image of values.yaml file](../media/image/module3-values-yaml.png)
 
-Inside the values file, there are many different parameters that we could set.  For example, line 1019 lists a value of **adminPassword: prom-operator**.  If we wanted to change this or any of the other default parameters, we could modify the values file.
+Inside the values file, there are many different parameters that we could set.  For example, line 1019 lists a value of **adminPassword: prom-operator**.  If you wanted to change this or any of the other default parameters, we could modify the values file.
 
 >[!tip]Refer to [this section](https://github.com/prometheus-community/helm-charts/blob/main/charts/kube-prometheus-stack/README.md#configuration) of the Helm repository to learn more about customizing this particular chart.
 
-Deploy Prometheus to collect cluster metrics.
+For this lab, you'll leave the default settings in the value file.
+
+To actually deploy, type:
+
+```shell
+helm install observability  --namespace observability --create-namespace prometheus-community/kube-prometheus-stack
+```
+![installing observability using Helm](../media/image/module3-helm-install.png)
+
+Verify that the pods are running with the following command:
+
+```shell
+kubectl --namespace observability get pods -l "release=observability"
+```
+
+The above command will show the pods that were created as part of the Helm chart you installed an their status.  After a short period of time, all pods should be ready.
+
+Step 3. Familiarize yourself with Grafana
+
+With the components necessary for Prometheus and Grafana running in your cluster, you'll need to temporarily expose the Grafana service outside the cluster.  In production, there are more robust ways to do this, like using an ingress controller; however, for the sake of simplicity, you'll run a port forwarding command to temporarily expose Grafana.
+
+```shell
+kubectl port-forward -n observability svc/observability-grafana --address 0.0.0.0 41367:80
+```
+
+![screenshot of Kubernetes port forwarding](../media/image/module3-port-forward.png)
+
+##Deploy Prometheus to collect cluster metrics.
 
 Install Grafana and configure it to pull metrics from Prometheus.
 
