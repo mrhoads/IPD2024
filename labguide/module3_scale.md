@@ -70,6 +70,28 @@ kubectl port-forward -n observability svc/observability-grafana --address 0.0.0.
 
 ![screenshot of Kubernetes port forwarding](../media/image/module3-port-forward.png)
 
+This command exposes a specific service, **observability-grafana** so that it can be accessed outside the cluster on port 41367, which will be forwarded to port 80.  For more information on port forwarding, refer to the [Kubernetes documentation](https://kubernetes.io/docs/tasks/access-application-cluster/port-forward-access-application-cluster/) on the topic.
+
+In your browser, go to 192.168.1.100:41367
+
+![image of Grafana login page](../media/image/module3-grafana-login.png)
+
+[!help]The username is **admin** and the password is **prom-operator**
+
+Login with the above credentials.  When you looked at the Helm values, you saw this default password.  While passwords should not typically be stored in Helm values files, this allows you to quickly get the observability stack running.
+
+From the hamburger menu in the upper left, navigate to dashboards.
+
+![image of Grafana dashboards](../media/image/module3-grafana-dashboards.png)
+
+There are many pre-created dashboards already available.  Click on the dashboard entitled **Kubernetes / Compute Resources / Cluster**
+
+This dashboard gives insight into the overall health of your Kubernetes cluster.  It's using prometheus and the underlying metrics it gets from [kube-state-metrics](https://github.com/kubernetes/kube-state-metrics) and [node exporter](https://github.com/prometheus/node_exporter).
+
+>[!tip] spend a few minutes exploring this and other dashboards to see the types of information it presents
+
+
+
 ##Deploy Prometheus to collect cluster metrics.
 
 Install Grafana and configure it to pull metrics from Prometheus.
