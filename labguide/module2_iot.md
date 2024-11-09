@@ -87,7 +87,7 @@ Now that we have these cloud resources, we can create a schema registry for Azur
 
 `az iot ops schema registry create --name schema@lab.LabInstance.GlobalId --resource-group rg-Edge --registry-namespace $STORAGE --sa-resource-id $(az storage account show --name $STORAGE --resource-group rg-Edge -o tsv --query id)`
 
-!IMAGE[iot init](./img/iotinit.png)
+!IMAGE[Create schema registry](./img/createschemareg.png)
 
 We will need the id of the resource we just created in a later step.
 
@@ -125,17 +125,21 @@ Now create the identity.
 
 !IMAGE[Create identity](./img/create_ssmi.png)
 
-Get the resource ID of the user-assigned managed identity:
+Get the resource ID of the user-assigned managed identity you just created.
 
 `export USER_ASSIGNED_MI_RESOURCE_ID=$(az identity show --name $USER_ASSIGNED_MI_NAME --resource-group rg-Edge --query id --output tsv)`
 
-Get the keyvault id.
+!IMAGE[View identity](./img/viewssmi.png)
+
+Get the keyvault id of the keyvault that was created for you as part of the lab initializing..
 
 `export AKV_ID=$(az keyvault list --query [].id -o tsv)`
 
-Finally, enable secret synchronization, using the variables we saved in step 
+Finally, enable secret synchronization, using the variables we saved.
 
 `az iot ops secretsync enable --name "aio-ignite" --resource-group rg-Edge --mi-user-assigned $USER_ASSIGNED_MI_RESOURCE_ID --kv-resource-id @lab.Variable(Azure_KeyVault_ID)`
+
+!IMAGE[Create secret sync](./img/secretsyncenable.png)
 
 ### **Module 2.3 - Explore MQTT**
 
