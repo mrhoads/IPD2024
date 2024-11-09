@@ -8,12 +8,12 @@ In this lab, you have access to an Ubuntu 22.04 LTS server with 8 processors and
 
     ssh 192.168.1.100
 
->[!help]The password is: @lab.VirtualMachine(UbuntuServer22.04).Password
+>[!help]The password is: +++@lab.VirtualMachine(UbuntuServer22.04).Password+++
 >[!alert]The IP address of the Ubuntu server may be 192.168.1.101
 
 #### Step 2 - Check cluster status.
 
-Once you're in, use kubectl to check the status of the nodes of the cluster. 
+Once you're in, use kubectl to check the status of the nodes of the cluster.
 
     kubectl get nodes
 
@@ -124,7 +124,7 @@ Get the keyvault id.
     export AKV_ID=$(az keyvault list --query [].id -o tsv)
 
 Finally, enable secret synchronization, using the variables we saved in step 
-    
+
     az iot ops secretsync enable --name "aio-ignite" --resource-group rg-Edge --mi-user-assigned $USER_ASSIGNED_MI_RESOURCE_ID --kv-resource-id @lab.Variable(Azure_KeyVault_ID)
 
 ### Module 2.3 - Explore MQTT
