@@ -2,20 +2,37 @@
 
 Lab Scenario: Implementing Observability for Arc-enabled Kubernetes Clusters
 
-In this lab, we'll explore how to observe the health and status of Arc-enabled Kubernetes clusters using Grafana and Azure Monitor. While there's overlap between these tools, we intend to show the core capabilities of both and discuss typical approaches used for monitoring.
+In this lab, you'll explore how to observe the health and status of Arc-enabled Kubernetes clusters using Grafana and Azure Monitor. While there's overlap between these tools, this lab intends to show the core capabilities of both and discuss typical approaches used for monitoring.
 
 
 ## What do we mean by observability?
 
-Observability in Kubernetes is crucial for maintaining the performance, reliability, and availability of applications. In industrial scenarios, this is crucial because the workloads being deployed are critical for worker safety, manufacturing, and a host of other reasons.  Knowing that a system is healthy or, conversely, knowing that a system is experiencing problems is key to operate Kubernetes cluster effectively and efficiently. #TODO - end here
+Observability in Kubernetes is crucial for maintaining the performance, reliability, and availability of applications. In industrial scenarios, this is crucial because the workloads being deployed are critical for worker safety, manufacturing, and a host of other reasons.  Knowing that a system is healthy or, conversely, knowing that a system is experiencing problems is key to operate Kubernetes cluster effectively and efficiently.
 
-Arc-enabled Kubernetes clusters provide a unified management platform for Kubernetes clusters across on-premises, multi-cloud, and edge environments. By integrating Grafana and Azure Monitor, you can achieve a holistic view of your cluster's performance and health metrics.
+In addition, we can use observability tools to make data-driven decisions.  For example, how effective is a particular piece of equipment?  How much of a certain product are we producing?  
 
-Step 1: Setting Up Grafana for On-Premises Monitoring
+Step 1: Setting Up Grafana and Prometheus for On-Premises Monitoring
 
-Grafana is an open-source platform for monitoring and observability, capable of visualizing metrics from various data sources. In this lab, you will deploy Grafana within your on-premises Arc-enabled Kubernetes cluster. Grafana will be configured to collect and display metrics from Prometheus, a popular monitoring tool for Kubernetes.
+Prometheus is an open-source tool that collects and stores metrics from a variety of sources in real-time.  Grafana is an open-source data analytics and visualization tool.  In this lab, you will deploy Prometheus and Grafana within your on-premises Arc-enabled Kubernetes cluster. Grafana will be configured to collect and display metrics from Prometheus, a popular monitoring tool for Kubernetes.
+
+>[!knowledge] While there is an Azure-native solution, known as [Azure Managed Grafana](https://learn.microsoft.com/en-us/azure/managed-grafana/overview), this lab focuses on self-hosting this solution.
 
 Install Prometheus and Grafana:
+
+A common way to install these tools is with Helm and the open-source [kube-prometheus-stack](https://github.com/prometheus-community/helm-charts/blob/main/charts/kube-prometheus-stack/README.md).  
+
+```
+helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+helm repo update
+```
+
+There are *lots* of different ways to configure this.  Inside VSCode, open artifacts/kube-prometheus-stack-values.yaml.
+
+![Image of values.yaml file](../media/image/module3-values-yaml.png)
+
+Inside the values file, there are many different parameters that we could set.  For example, line 1019 lists a value of **adminPassword: prom-operator**.  If we wanted to change this or any of the other default parameters, we could modify the values file.
+
+>[!tip]Refer to [this section](https://github.com/prometheus-community/helm-charts/blob/main/charts/kube-prometheus-stack/README.md#configuration) of the Helm repository to learn more about customizing this particular chart.
 
 Deploy Prometheus to collect cluster metrics.
 
