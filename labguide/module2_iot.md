@@ -153,15 +153,19 @@ First let's identity the service where the MQ broker is listening. Run the follo
 
 `kubectl get svc -n azure-iot-operations`
 
+!IMAGE[Kubectl get svc](./img/ksvc.png)
+
 > [!note] Please note the **aio-broker-insecure** service for enabling the internal communication with the MQTT broker on port 1883.
 
 Deploy a workload that will simulate industrial assets and send data to the MQ Broker.
+
+#### **Step 3 - Check topics with MQTT Explorer**
 
 `kubectl apply -f simulator.yaml`
 
 !IMAGE [simulatordeployment.png](instructions277358/simulatordeployment.png)
 
-#### **Step 2 - Check topics with MQTT Explorer**
+#### **Step 4 - Check topics with MQTT Explorer**
 
 Go to the favourites bar and click the MQTT Explorer icon to open it, and click con **Connect** as indicated in the image. We can use this program to check the contents of the MQTT Broker.
 
@@ -175,7 +179,7 @@ Our simulator is publishing messages to the **"iot/devices" topic** prefix. You 
 
 > [!knowledge] Azure IoT Operations publishes its own self test messages to the azedge topic. This is useful to confirm that the MQ Broker is available and receiving messages.
 
-## **Module 4 - Transform Data at Scale with Azure IoT Operations**
+## **Module 2.4 - Transform Data at Scale with Azure IoT Operations**
 
 In this module you will learn the following skills:
 
