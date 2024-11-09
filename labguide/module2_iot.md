@@ -4,30 +4,36 @@ In this lab, you have access to an Ubuntu 22.04 LTS server with 8 processors and
 
 ### Module 2.1 - Arc-enable a Rancher K3s cluster
 
-#### Step 1 - Remote into the Ubuntu server using ssh.
+#### Step 1 - Remote into the Ubuntu server using ssh
 
-    ssh 192.168.1.100
+```PowerShell
+ssh 192.168.1.100
+```
 
 >[!help]The password is: +++@lab.VirtualMachine(UbuntuServer22.04).Password+++
 >[!alert]The IP address of the Ubuntu server may be 192.168.1.101
 
-#### Step 2 - Check cluster status.
+#### Step 2 - Check cluster status
 
 Once you're in, use kubectl to check the status of the nodes of the cluster.
 
     kubectl get nodes
 
-!IMAGE[xncv6lf6.jpg](instructions275881/xncv6lf6.jpg)
+!IMAGE[kubectl get nodes](img/step2a.png)
 
 Great, now let's check the running pods.
 
     kubectl get pods -A
 
-!IMAGE[znpwctui.jpg](instructions275881/znpwctui.jpg)
+!IMAGE[kubectl get pods](img/step2b.png)
 
-If everything looks good then this cluster can be onboarded to Azure with Azure Arc. Login to Azure with a device code. Use the Azure credentials available in the lab guide "Resources" tab.
+If everything looks good then this cluster can be onboarded to Azure with Azure Arc. Login to Azure with a device code using the following command. Use the Azure credentials available in the lab guide "Resources" tab.
 
     az login --use-device-code
+
+!IMAGE[Azure device code login](img/step2c.png)
+
+    `az login --use-device-code`
 
 >[!hint]When prompted, select the default Azure subscription.
 
