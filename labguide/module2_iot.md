@@ -17,23 +17,27 @@ ssh 192.168.1.100
 
 Once you're in, use kubectl to check the status of the nodes of the cluster.
 
-    kubectl get nodes
+```PowerShell
+kubectl get nodes
+```
 
 !IMAGE[kubectl get nodes](img/step2a.png)
 
 Great, now let's check the running pods.
 
-    kubectl get pods -A
+```PowerShell
+kubectl get pods -A
+```
 
 !IMAGE[kubectl get pods](img/step2b.png)
 
 If everything looks good then this cluster can be onboarded to Azure with Azure Arc. Login to Azure with a device code using the following command. Use the Azure credentials available in the lab guide "Resources" tab.
 
-    az login --use-device-code
+```PowerShell
+az login --use-device-code
+```
 
 !IMAGE[Azure device code login](img/step2c.png)
-
-    `az login --use-device-code`
 
 >[!hint]When prompted, select the default Azure subscription.
 
