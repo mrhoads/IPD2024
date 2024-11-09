@@ -67,21 +67,27 @@ Next, verify that the host is ready.
 
 `az iot ops verify-host`
 
+!IMAGE[Verify IOT host](./img/module2.2.1a.png)
+
 #### **Step 2 - Prepare to create a schema registry**
 
 We will need some cloud resources in Azure to use with Azure IoT Operations including a [schema registry](https://learn.microsoft.com/azure/event-hubs/schema-registry-concepts). For this lab, the storage account and keyvault have been created to save time. We can get the identifiers of these resources and store them in shell variables.
 
-Next get the storage account.
+Next get the storage account and store it in an environment variable for ease of use in next steps.
 
 `export STORAGE=$(az storage account list --resource-group rg-Edge -o tsv --query [].name)`
 
 >[!hint]If you want to see the values of the variables we just created, you can "echo" them ```echo $STORAGE```
+
+!IMAGE[echo storage](./img/echo-storage.png)
 
 #### **Step 3 - Create a schema registry**
 
 Now that we have these cloud resources, we can create a schema registry for Azure IoT Operations.
 
 `az iot ops schema registry create --name schema@lab.LabInstance.GlobalId --resource-group rg-Edge --registry-namespace $STORAGE --sa-resource-id $(az storage account show --name $STORAGE --resource-group rg-Edge -o tsv --query id)`
+
+
 
 We will need the id of the resource we just created in a later step.
 
@@ -167,17 +173,13 @@ Our simulator is publishing messages to the **"iot/devices" topic** prefix. You 
 
 In this module you will learn the following skills:
 
-* Learn about the Digital Operations Experience portal (DOE).
-* How to use Dataflows to contextualize and send data edge to cloud.
-* Deployment options and examples.
+* Learn about the Azure IoT Operations portal
+* Learn how to use Dataflows to build an OT data pipeline from edge to cloud
+* View our data collected at the edge and sent to Azure with a Dataflow to an Azure Event Hub
 
-**Digital Operations Experience**
+Azure IoT Operations, Azure IoT Operations has dedicated portal where users can monitor and manage industrial assets [Sites](https://learn.microsoft.com/azure/iot-operations/deploy-iot-ops/overview-deploy#organize-instances-by-using-sites) and [Dataflows](https://learn.microsoft.com/azure/iot-operations/connect-to-cloud/overview-dataflow).
 
-As part of the Operational Technology rol, Azure IoT Operations has dedicated portal where monitor and manage **Sites** and data transformations with **Dataflows**.
-
-**Sites**
-
-Azure Arc site manager allows you to manage and monitor your on-premises environments as **Azure Arc sites**. Arc sites are scoped to an Azure resource group or subscription and enable you to track connectivity, alerts, and updates across your environment. The experience is tailored for on-premises scenarios where infrastructure is often managed within a common physical boundary, such as a store, restaurant, or factory.
+**Sites** - Azure Arc site manager allows you to manage and monitor your on-premises environments as **Azure Arc sites**. Arc sites are scoped to an Azure resource group or subscription and enable you to track connectivity, alerts, and updates across your environment. The experience is tailored for on-premises scenarios where infrastructure is often managed within a common physical boundary, such as a store, restaurant, or factory.
 
 Please, click on View unassigned instances:
 
