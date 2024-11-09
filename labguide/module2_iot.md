@@ -167,11 +167,9 @@ We can simulate real industrial assets such as commercial refrigeration and oven
 
 #### **Step 3 - Check topics with MQTT Explorer**
 
-Go to the favourites bar and click the MQTT Explorer icon to open it, and click con **Connect** as indicated in the image. We can use this program to check the contents of the MQTT Broker.
+Minimize the Terminal window and go to the Windows desktop to find the icon for MQTT Explorer.
 
 !IMAGE[mqttconfig.png](instructions277358/mqttconfig.png)
-
-MQTT uses MQTT Topics to organize messages. An MQTT topic is like an address used by the protocol to route messages between publishers and subscribers. Think of it as a specific channel or path where devices can send (publish) and receive (subscribe to) messages. Each topic can have multiple levels separated by slashes, such as home/livingroom/temperature, to organize data more effectivelycan be published to specific topics.
 
 Our simulator is publishing messages to the **"iot/devices" topic** prefix. You can drill down through the topics to view incoming MQ messages written by the devices to specific MQTT topics.
 
