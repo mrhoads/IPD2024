@@ -207,7 +207,7 @@ And select your instance from the list.
 
 #### **Step 2 - Set RBAC to allow Azure IoT Operations to send data to and receive data from Event Hub**
 
-To enable Azure IoT Operations to send and receive data from Event Hub, we need to assign the appropriate roles to its managed identity. Specifically, we must assign the "Azure Event Hubs Data Sender" and "Azure Event Hubs Data Receiver" roles. These roles grant the necessary permissions for data transmission and reception. You can use the Azure CLI to perform these role assignments, and to make this a bit faster for the lab we have included a script for you to run. 
+To enable Azure IoT Operations to send and receive data from Event Hub, we need to assign the appropriate roles to its managed identity. Specifically, we must assign the "Azure Event Hubs Data Sender" and "Azure Event Hubs Data Receiver" roles. These roles grant the necessary permissions for data transmission and reception. You can use the Azure CLI to perform these role assignments, and to make this a bit faster for the lab we have included a script for you to run.
 
 Return to the Terminal window and run the following command.
 
@@ -219,9 +219,6 @@ Return to the Terminal window and run the following command.
 
 Now return to the Azure IoT Operations Experience portal and click on Dataflow Endpoints on the left.
 
-!IMAGE[]
-
 #### **Step 4 - Create a dataflow**
 
 #### **Step 5 - View data on Event Hub**
-
