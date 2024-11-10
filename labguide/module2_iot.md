@@ -181,9 +181,9 @@ Azure IoT Operations provides powerful tools to simplify the creation and manage
 
 The configuration for a Dataflow can be done using several different methods:
 
+* Azure IoT Operations Experience: Design your Dataflows and Data Processor Transformations with a rich user interface and synch changes to the edge to perform on-prem contextualization.
 * Via Bicep automation: Changes are deployed on the Schema Registry and are synced to the edge.
-* Via DOE: Design your Dataflows and Data Processor Transformations with the UX and synch changes to the edge to perform on-prem contextualization.
-* With Kubernetes and Custom Resource Definitions (CRDs).
+* With Kubernetes: Use Custom Resource Definitions (CRDs) to make Dataflow configures part of your Kubernetes artifacts.
 
 You can create configurations for various use cases, such as:
 
@@ -217,8 +217,50 @@ Return to the Terminal window and run the following command.
 
 ### **Step 3 - Create and configure a dataflow endpoint for Azure Event Hub**
 
-Now return to the Azure IoT Operations Experience portal and click on Dataflow Endpoints on the left.
+Open the Azure portal and navigate to your rg-Edge resource group. Find the Event Hub resource and click on it to open.
+
+!IMAGE[Finding Event Hub](./img/portaleventhub.png)
+
+Next, click on Entities and then Event Hubs. The Event Hub that has been precreated for you can be used with a Dataflow Endpoint. You will need both the name of the Event Hub namespace (#1 in the screenshot), and the name of the Event Hub topic (#2 in the screenshot).
+
+!IMAGE[Finding Event Hub topic](./img/eventhubtopic.png)
+
+Now return to the Azure IoT Operations Experience portal and click on Dataflow Endpoints on the left, then click the button to add a new Event Hub endpoint.
+
+!IMAGE[Create dataflow endpoint](./img/newdceh.png)
+
+Enter a name for the dataflow endpoint and enter the Event Hub namespace name (#1) into the service endpoint prefix.
 
 ### **Step 4 - Create a dataflow**
 
+Now click on Dataflows on the right side to create a Dataflow.
+
+!IMAGE[Dataflow name](./img/createdataflow.png)
+
+In the Source window, give the dataflow a name, and select MQTT as the source and "iot/#" as the topic.
+
+!IMAGE[Source data](./img/dataflow_name.png)
+
+Select the dataflow endpoint we just created.
+
+!IMAGE[Endpoint](./img/ep2.png)
+
+For topic, enter the topic name we retrieved earlier (#2 in the screenshot)
+
+!IMAGE[Topic](./img/ep3.png)
+
+Proceed and then save your dataflow.
+
 ### **Step 5 - View data on Event Hub**
+
+Return to the Azure portal and open your Event Hub topic and click Data Explorer.
+
+!IMAGE[Data explorer](./img/ehde.png)
+
+Click view events to view the events from MQTT that have been sent to Event Hub.
+
+!IMAGE[View events](./img/viewevents.png)
+
+---
+
+Click next to continue to the next lab.
