@@ -59,6 +59,10 @@ Before we can deploy Azure IOT Operations, we need to enable the custom location
 
 >[!hint]The password is @lab.VirtualMachine(UbuntuServer22.04).Password
 
+Click next to continue.
+
+===
+
 ### **Module 2.2 - Deploy Azure IOT Operations**
 
 #### **Step 1 - Prepare to install Azure IOT Operations**
@@ -117,37 +121,13 @@ Next, we can deploy the AIO solution. This somewhat lengthy command will take so
 
 >[!knowledge]For this lab, we are using an insecure listener for the MQ Broker. In a production environment, you can secure this endpoint using TLS and a certificate.
 
-#### **Step 6 - Enable secure settings**
+Click next to continue.
 
-Secrets Management for Azure IoT Operations uses Secret Store extension to sync the secrets from an Azure Key Vault and store them on the edge as Kubernetes secrets. Create a name for the managed identity and store it in an environment variable.
-
-`export USER_ASSIGNED_MI_NAME="aiomi@lab.LabInstance.GlobalId"`
-
-Now create the identity.
-
-`az identity create --name $USER_ASSIGNED_MI_NAME --resource-group rg-Edge`
-
-!IMAGE[Create identity](./img/create_ssmi.png)
-
-Get the resource ID of the user-assigned managed identity you just created.
-
-`export USER_ASSIGNED_MI_RESOURCE_ID=$(az identity show --name $USER_ASSIGNED_MI_NAME --resource-group rg-Edge --query id --output tsv)`
-
-!IMAGE[View identity](./img/viewssmi.png)
-
-Get the keyvault id of the keyvault that was created for you as part of the lab initializing..
-
-`export AKV_ID=$(az keyvault list --query [].id -o tsv)`
-
-Finally, enable secret synchronization, using the variables we saved.
-
-`az iot ops secretsync enable --name "aio-ignite" --resource-group rg-Edge --mi-user-assigned $USER_ASSIGNED_MI_RESOURCE_ID --kv-resource-id @lab.Variable(Azure_KeyVault_ID)`
-
-!IMAGE[Create secret sync](./img/secretsyncenable.png)
+===
 
 ### **Module 2.3 - Explore MQTT**
 
-MQTT uses MQTT Topics to organize messages. An MQTT topic is like an address used by the protocol to route messages between publishers and subscribers. Think of it as a specific channel or path where devices can send (publish) and receive (subscribe to) messages. Each topic can have multiple levels separated by slashes, such as home/livingroom/temperature, to organize data more effectivelycan be published to specific topics.
+MQTT uses Topics to organize messages. An MQTT topic is like an address used by the protocol to route messages between publishers and subscribers. Think of it as a specific channel or path where devices can send (publish) and receive (subscribe to) messages. Each topic can have multiple levels separated by slashes, such as home/livingroom/temperature, to organize data more effectivelycan be published to specific topics.
 
 We can use a local MQTT client to easily check that the [MQ Broker](https://learn.microsoft.com/azure/iot-operations/manage-mqtt-broker/overview-iot-mq) component of Azure IoT Operations is working normally.
 
@@ -187,7 +167,11 @@ Our simulator is publishing messages to the **"iot/devices" topic** prefix. You 
 
 Now let's move on to sending data from the MQ broker downstream through a data pipeline.
 
-### **Module 2.4 - Bridge IT and OT Azure IoT Operations**
+Click next to continue.
+
+===
+
+### **Module 2.4 - Azure IoT Operations Experience for OT**
 
 Azure IoT Operations is designed to bridge the gap between IT (Information Technology) and OT (Operational Technology) by providing two distinct components tailored for each group. For IT workers, Azure IoT Operations offers robust cloud-based management and analytics tools, enabling seamless integration with existing IT infrastructure and cloud services. This includes capabilities like [Azure Arc](https://learn.microsoft.com/azure/azure-arc/overview) for managing hybrid environments and [Dataflows](https://learn.microsoft.com/azure/iot-operations/connect-to-cloud/overview-dataflow) for building data pipelines. For OT workers, Azure IoT Operations provides edge solutions that ensure reliable and real-time data processing and device management on the factory floor or in other operational environments. This includes tools like [MQTT Broker](https://learn.microsoft.com/azure/iot-operations/manage-mqtt-broker/overview-iot-mq) for efficient message routing and [Data Processor](https://learn.microsoft.com/azure/iot-operations/manage-dataflows/data-processor) for on-premises data transformation. By catering to the needs of both IT and OT, Azure IoT Operations enables a unified approach to managing and optimizing industrial IoT solutions.
 
