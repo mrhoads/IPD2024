@@ -49,7 +49,7 @@ Once logged in, use the following command to onboard the kubernetes cluster to A
 
 It will take a few minutes to onboard the cluster. In the meantime, you can open Azure portal and navigate to your resource group. When the cluster is finished onboarding, you will be able to view it in the portal.
 
-!IMAGE[5x563n7i.jpg](instructions275881/5x563n7i.jpg)
+!IMAGE[Arc K8s in portal](./img/arck8s.png)
 
 #### **Step 4 - Enable the custom locations feature of the cluster**
 
