@@ -59,9 +59,7 @@ Before we can deploy Azure IOT Operations, we need to enable the custom location
 
 >[!hint]The password is @lab.VirtualMachine(UbuntuServer22.04).Password
 
-Click next to continue.
-
-===
+---
 
 ## **Module 2.2 - Deploy Azure IOT Operations**
 
@@ -121,9 +119,7 @@ Next, we can deploy the AIO solution. This somewhat lengthy command will take so
 
 >[!knowledge]For this lab, we are using an insecure listener for the MQ Broker. In a production environment, you can secure this endpoint using TLS and a certificate.
 
-Click next to continue.
-
-===
+---
 
 ## **Module 2.3 - Explore MQTT**
 
@@ -167,9 +163,7 @@ Our simulator is publishing messages to the **"iot/devices" topic** prefix. You 
 
 Now let's move on to sending data from the MQ broker downstream through a data pipeline.
 
-Click next to continue.
-
-===
+---
 
 ## **Module 2.4 - Azure IoT Operations Experience for OT**
 
