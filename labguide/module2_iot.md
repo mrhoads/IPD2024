@@ -175,6 +175,22 @@ Click next to continue.
 
 Azure IoT Operations is designed to bridge the gap between IT (Information Technology) and OT (Operational Technology) by providing two distinct components tailored for each group. For IT workers, Azure IoT Operations offers robust cloud-based management and analytics tools, enabling seamless integration with existing IT infrastructure and cloud services. This includes capabilities like [Azure Arc](https://learn.microsoft.com/azure/azure-arc/overview) for managing hybrid environments and [Dataflows](https://learn.microsoft.com/azure/iot-operations/connect-to-cloud/overview-dataflow) for building data pipelines. For OT workers, Azure IoT Operations provides edge solutions that ensure reliable and real-time data processing and device management on the factory floor or in other operational environments. This includes tools like [MQTT Broker](https://learn.microsoft.com/azure/iot-operations/manage-mqtt-broker/overview-iot-mq) for efficient message routing and [Data Processor](https://learn.microsoft.com/azure/iot-operations/manage-dataflows/data-processor) for on-premises data transformation. By catering to the needs of both IT and OT, Azure IoT Operations enables a unified approach to managing and optimizing industrial IoT solutions.
 
+### Dataflows
+
+Azure IoT Operations provides powerful tools to simplify the creation and management of dataflows, enabling seamless data movement and transformation from edge to cloud. The [Dataflows](https://learn.microsoft.com/azure/iot-operations/connect-to-cloud/overview-dataflow) feature allows you to connect various data sources, perform data operations, and enrich data, making it easier to analyze and gain insights from your IoT data. With [Data Processor](https://learn.microsoft.com/azure/iot-operations/manage-dataflows/data-processor), you can perform on-premises data transformations before sending data to its destination. These capabilities help streamline the setup of data paths, whether you need to move, transform, or enrich data, providing a robust and scalable solution for managing industrial IoT data.
+
+The configuration for a Dataflow can be done using several different methods:
+
+* Via Bicep automation: Changes are deployed on the Schema Registry and are synced to the edge.
+* Via DOE: Design your Dataflows and Data Processor Transformations with the UX and synch changes to the edge to perform on-prem contextualization.
+* With Kubernetes and Custom Resource Definitions (CRDs).
+
+You can create configurations for various use cases, such as:
+
+* Transform data and send it back to MQTT
+* Transform data and send it to the cloud
+* Send data to the cloud or edge without transformation
+
 #### **Step 1 - Open the Azure IoT Operations portal**
 
 Open Microsoft Edge by clicking the icon on the desktop, then click the bookmark for the Azure IoT Operations experience portal.
@@ -189,40 +205,23 @@ And select your instance from the list.
 
 !IMAGE[View instance](./img/clickinstance.png)
 
-In this screen, you can check monitoring metrics of the Arc enabled cluster in Sites. Now, let's move to Dataflows on the left panel.
+#### **Step 2 - Set RBAC to allow Azure IoT Operations to send data to and receive data from Event Hub**
 
-!IMAGE[Click dataflows](./img/press-dataflows.png)
+To enable Azure IoT Operations to send and receive data from Event Hub, we need to assign the appropriate roles to its managed identity. Specifically, we must assign the "Azure Event Hubs Data Sender" and "Azure Event Hubs Data Receiver" roles. These roles grant the necessary permissions for data transmission and reception. You can use the Azure CLI to perform these role assignments, and to make this a bit faster for the lab we have included a script for you to run. 
 
-#### **Step 2 - Dataflows in Azure IoT Operations experience**
-
-Azure IoT Operations provides powerful tools to simplify the creation and management of dataflows, enabling seamless data movement and transformation from edge to cloud. The [Dataflows](https://learn.microsoft.com/azure/iot-operations/connect-to-cloud/overview-dataflow) feature allows you to connect various data sources, perform data operations, and enrich data, making it easier to analyze and gain insights from your IoT data. With [Data Processor](https://learn.microsoft.com/azure/iot-operations/manage-dataflows/data-processor), you can perform on-premises data transformations, ensuring that data is processed and contextualized before being sent to its destination. These capabilities help streamline the setup of data paths, whether you need to move, transform, or enrich data, providing a robust and scalable solution for managing industrial IoT data.
-
-The configuration for a Dataflow can be done using several different methods:
-
-* Via Bicep automation: Changes are deployed on the Schema Registry and are synced to the edge.
-* Via DOE: Design your Dataflows and Data Processor Transformations with the UX and synch changes to the edge to perform on-prem contextualization.
-* With Kubernetes and Custom Resource Definitions (CRDs).
-
-You can write configurations for various use cases, such as:
-
-* Transform data and send it back to MQTT
-* Transform data and send it to the cloud
-* Send data to the cloud or edge without transformation
-
-#### **Step 3 - Set RBAC to allow Azure IoT Operations to send data to and receive data from Event Hub**
-
-To enable Azure IoT Operations to send and receive data from Event Hub, we need to assign the appropriate roles to its managed identity. Specifically, we must assign the "Azure Event Hubs Data Sender" and "Azure Event Hubs Data Receiver" roles. These roles grant the necessary permissions for data transmission and reception. You can use the Azure CLI to perform these role assignments, but to make this a bit faster we have included a script for you to run. Execute the following command.
+Return to the Terminal window and run the following command.
 
 `./setRBAC.sh`
 
 !IMAGE[Setting RBAC]()
 
-#### **Step 3 - Create a dataflow endpoint to Azure Event Hub**
+#### **Step 3 - Create and configure a dataflow endpoint for Azure Event Hub**
 
-First, use Azure CLI to retrieve the values of the Event Hub namespace, resource id, and hostname and store the values in environment variables.
+Now return to the Azure IoT Operations Experience portal and click on Dataflow Endpoints on the left.
 
-#### **Step 5 - Create a dataflow**
+!IMAGE[]
 
+#### **Step 4 - Create a dataflow**
 
-#### **Step 6 - View data on Event Hub**
+#### **Step 5 - View data on Event Hub**
 
