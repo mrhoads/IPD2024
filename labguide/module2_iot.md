@@ -1,17 +1,21 @@
-## **Lab 2 - Edge-to-Cloud Industrial IoT**
+# **Lab 2 - Edge-to-Cloud Industrial IoT**
+
+In this lab, you will explore the [MQ Broker component](https://learn.microsoft.com/azure/iot-operations/manage-mqtt-broker/overview-iot-mq) of Azure IoT Operations, which is essential for managing and routing messages between IoT devices. The MQ Broker facilitates communication by using MQTT (Message Queuing Telemetry Transport), a lightweight and efficient messaging protocol. You will learn how to set up and interact with the MQ Broker, deploy data simulators, and use tools like MQTT Explorer to monitor and analyze the messages being exchanged. This hands-on experience will provide you with a deeper understanding of how Azure IoT Operations can be leveraged to build robust and scalable industrial IoT solution
+
+[MQTT (Message Queuing Telemetry Transport)](https://en.wikipedia.org/wiki/MQTT) is a lightweight messaging protocol that is highly effective in AI use cases due to its efficient bandwidth usage and low latency. It enables seamless communication between IoT devices and AI systems, allowing for real-time data collection and processing. This is particularly powerful in scenarios such as predictive maintenance, smart cities, and autonomous vehicles, where timely and reliable data transmission is crucial. By leveraging MQTT, AI applications can receive continuous streams of data from various sensors and devices, facilitating rapid decision-making and enhancing the overall intelligence and responsiveness of the system.
+
+## **Module 2.1 - Arc-enable a Rancher K3s cluster**
 
 In this lab, you have access to an Ubuntu 22.04 LTS server with 8 processors and 16GB memory. You will use this as an edge Kubernetes host for running an industrial AI solution. To save a little time, the server has already been configured with Rancher K3s. Let's take a look at the environment now. Click on the Windows Terminal icon on the desktop to open a shell.
 
-### **Module 2.1 - Arc-enable a Rancher K3s cluster**
-
-#### **Step 1 - Remote into the Ubuntu server using ssh**
+### **Step 1 - Remote into the Ubuntu server using ssh**
 
 `ssh 192.168.1.100`
 
 >[!help]The password is: +++@lab.VirtualMachine(UbuntuServer22.04).Password+++
 >[!alert]The IP address of the Ubuntu server may be 192.168.1.101
 
-#### **Step 2 - Check cluster status**
+### **Step 2 - Check cluster status**
 
 Once you're in, use kubectl to check the status of the nodes of the cluster.
 
@@ -33,7 +37,7 @@ If everything looks good then this cluster can be onboarded to Azure with Azure 
 
 >[!hint]When prompted, select the default Azure subscription.
 
-#### **Step 3 - Connect the cluster to Azure Arc**
+### **Step 3 - Connect the cluster to Azure Arc**
 
 Once logged in, use the following command to onboard the kubernetes cluster to Azure with Azure Arc.
 
@@ -45,9 +49,9 @@ Once logged in, use the following command to onboard the kubernetes cluster to A
 
 It will take a few minutes to onboard the cluster. In the meantime, you can open Azure portal and navigate to your resource group. When the cluster is finished onboarding, you will be able to view it in the portal.
 
-!IMAGE[5x563n7i.jpg](instructions275881/5x563n7i.jpg)
+!IMAGE[Arc K8s in portal](./img/arck8s.png)
 
-#### **Step 4 - Enable the custom locations feature of the cluster**
+### **Step 4 - Enable the custom locations feature of the cluster**
 
 Before we can deploy Azure IOT Operations, we need to enable the custom locations feature on the cluster. Run this script to quickly enable the feature.
 
@@ -55,9 +59,11 @@ Before we can deploy Azure IOT Operations, we need to enable the custom location
 
 >[!hint]The password is @lab.VirtualMachine(UbuntuServer22.04).Password
 
-### **Module 2.2 - Deploy Azure IOT Operations**
+---
 
-#### **Step 1 - Prepare to install Azure IOT Operations**
+## **Module 2.2 - Deploy Azure IOT Operations**
+
+### **Step 1 - Prepare to install Azure IOT Operations**
 
 First install the CLI extension for Azure IOT Operations.
 
@@ -69,7 +75,7 @@ Next, verify that the host is ready.
 
 !IMAGE[Verify IOT host](./img/module2.2.1a.png)
 
-#### **Step 2 - Prepare to create a schema registry**
+### **Step 2 - Prepare to create a schema registry**
 
 We will need some cloud resources in Azure to use with Azure IoT Operations including a [schema registry](https://learn.microsoft.com/azure/event-hubs/schema-registry-concepts). For this lab, the storage account and keyvault have been created to save time. We can get the identifiers of these resources and store them in shell variables.
 
@@ -81,13 +87,13 @@ Next get the storage account and store it in an environment variable for ease of
 
 !IMAGE[echo storage](./img/echo-storage.png)
 
-#### **Step 3 - Create a schema registry**
+### **Step 3 - Create a schema registry**
 
 Now that we have these cloud resources, we can create a schema registry for Azure IoT Operations.
 
 `az iot ops schema registry create --name schema@lab.LabInstance.GlobalId --resource-group rg-Edge --registry-namespace $STORAGE --sa-resource-id $(az storage account show --name $STORAGE --resource-group rg-Edge -o tsv --query id)`
 
-
+!IMAGE[Create schema registry](./img/createschemareg.png)
 
 We will need the id of the resource we just created in a later step.
 
@@ -95,183 +101,160 @@ We will need the id of the resource we just created in a later step.
 
 >[!knowledge] Schemas are documents that describe the format of a message and its contents to enable processing and contextualization. The schema registry is a synchronized repository in the cloud and at the edge. The schema registry stores the definitions of messages coming from edge assets, and then exposes an API to access those schemas at the edge. The schema registry is backed by a cloud storage account. This storage account was pre-created as part of the lab setup.
 
-#### **Step 4 - Initialize Azure IoT Operations**
+### **Step 4 - Initialize Azure IoT Operations**
 
 Now you can initialize the cluster for the Azure IoT Operations services. This command  will take a few minutes to complete.
 
 `az iot ops init --cluster arc-k3s --resource-group rg-Edge`
 
-!IMAGE[8acn4r2e.jpg](instructions275881/8acn4r2e.jpg)
+!IMAGE[iot init](./img/iotinit.png)
 
-#### **Step 5 - Deploy Azure IoT Operations**
+### **Step 5 - Deploy Azure IoT Operations**
 
 Next, we can deploy the AIO solution. This somewhat lengthy command will take some time to type out.
 
 `az iot ops create --name aio-ignite --cluster arc-k3s --resource-group rg-Edge --sr-resource-id $SCHEMA_REGISTRY_RESOURCE_ID --broker-frontend-replicas 1 --broker-frontend-workers 1 --broker-backend-part 1 --broker-backend-workers 1 --broker-backend-rf 2 --broker-mem-profile Low --add-insecure-listener true`
 
-!IMAGE[yibsdkr5.jpg](instructions275881/yibsdkr5.jpg)
+!IMAGE[iot create](./img/iotcreate.png)
 
 >[!knowledge]For this lab, we are using an insecure listener for the MQ Broker. In a production environment, you can secure this endpoint using TLS and a certificate.
 
-#### **Step 6 - Enable secure settings**
+---
 
-Secrets Management for Azure IoT Operations uses Secret Store extension to sync the secrets from an Azure Key Vault and store them on the edge as Kubernetes secrets. Create a name for the managed identity and store it in an environment variable.
+## **Module 2.3 - Explore MQTT**
 
-`export USER_ASSIGNED_MI_NAME="aiomi@lab.LabInstance.GlobalId"`
-
-Now create the identity.
-
-`az identity create --name $USER_ASSIGNED_MI_NAME --resource-group rg-Edge`
-
-Get the resource ID of the user-assigned managed identity:
-
-`export USER_ASSIGNED_MI_RESOURCE_ID=$(az identity show --name $USER_ASSIGNED_MI_NAME --resource-group rg-Edge --query id --output tsv)`
-
-Get the keyvault id.
-
-`export AKV_ID=$(az keyvault list --query [].id -o tsv)`
-
-Finally, enable secret synchronization, using the variables we saved in step 
-
-`az iot ops secretsync enable --name "aio-ignite" --resource-group rg-Edge --mi-user-assigned $USER_ASSIGNED_MI_RESOURCE_ID --kv-resource-id @lab.Variable(Azure_KeyVault_ID)`
-
-### **Module 2.3 - Explore MQTT**
-
-MQTT uses MQTT Topics to organize messages. An MQTT topic is like an address used by the protocol to route messages between publishers and subscribers. Think of it as a specific channel or path where devices can send (publish) and receive (subscribe to) messages. Each topic can have multiple levels separated by slashes, such as home/livingroom/temperature, to organize data more effectivelycan be published to specific topics.
+MQTT uses Topics to organize messages. An MQTT topic is like an address used by the protocol to route messages between publishers and subscribers. Think of it as a specific channel or path where devices can send (publish) and receive (subscribe to) messages. Each topic can have multiple levels separated by slashes, such as home/livingroom/temperature, to organize data more effectivelycan be published to specific topics.
 
 We can use a local MQTT client to easily check that the [MQ Broker](https://learn.microsoft.com/azure/iot-operations/manage-mqtt-broker/overview-iot-mq) component of Azure IoT Operations is working normally.
 
-#### **Step 1 - Get the MQ broker endpoint**
+### **Step 1 - Get the MQ broker endpoint**
 
 First let's identity the service where the MQ broker is listening. Run the following command.
 
 `kubectl get svc -n azure-iot-operations`
 
+!IMAGE[Kubectl get svc](./img/ksvc.png)
+
 > [!note] Please note the **aio-broker-insecure** service for enabling the internal communication with the MQTT broker on port 1883.
 
-Deploy a workload that will simulate industrial assets and send data to the MQ Broker.
+### **Step 2 - Deploy a data simulator**
+
+We can simulate real industrial assets such as commercial refrigeration and oven units, HVAC systems, Deploy a workload that will simulate industrial assets and send data to the MQ Broker.
 
 `kubectl apply -f simulator.yaml`
 
 !IMAGE [simulatordeployment.png](instructions277358/simulatordeployment.png)
 
-#### **Step 2 - Check topics with MQTT Explorer**
+### **Step 3 - Check topics with MQTT Explorer**
 
-Go to the favourites bar and click the MQTT Explorer icon to open it, and click con **Connect** as indicated in the image. We can use this program to check the contents of the MQTT Broker.
+Minimize the Terminal window and go to the Windows desktop to find the icon for MQTT Explorer. Double click to open it.
 
-!IMAGE[mqttconfig.png](instructions277358/mqttconfig.png)
+!IMAGE[MQTT Icon](./img/mqtticon.png)
 
-MQTT uses MQTT Topics to organize messages. An MQTT topic is like an address used by the protocol to route messages between publishers and subscribers. Think of it as a specific channel or path where devices can send (publish) and receive (subscribe to) messages. Each topic can have multiple levels separated by slashes, such as home/livingroom/temperature, to organize data more effectivelycan be published to specific topics.
+The connection to Azure IoT Operations is already setup, so click Connect.
 
-Our simulator is publishing messages to the **"iot/devices" topic** prefix. You can drill down through the topics to view incoming MQ messages written by the devices to specific MQTT topics.
+!IMAGE[MQTT explorer](img/mqtt2.png)
 
-!IMAGE [podinmqttexplorer.png](instructions277358/podinmqttexplorer.png)
+Our simulator is publishing messages to the **"iot/devices" topic** prefix. You can drill down through the topics to view incoming MQ messages written by the devices to specific MQTT topics. By clicking on an indivudal message within a topic you can view its contents.
+
+!IMAGE[MQTT explorer](img/mqtt3.png)
 
 > [!knowledge] Azure IoT Operations publishes its own self test messages to the azedge topic. This is useful to confirm that the MQ Broker is available and receiving messages.
 
-## **Module 4 - Transform Data at Scale with Azure IoT Operations**
+Now let's move on to sending data from the MQ broker downstream through a data pipeline.
 
-In this module you will learn the following skills:
+---
 
-* Learn about the Azure IoT Operations portal
-* Learn how to use Dataflows to build an OT data pipeline from edge to cloud
-* View our data collected at the edge and sent to Azure with a Dataflow to an Azure Event Hub
+## **Module 2.4 - Azure IoT Operations Experience for OT**
 
-Azure IoT Operations, Azure IoT Operations has dedicated portal where users can monitor and manage industrial assets [Sites](https://learn.microsoft.com/azure/iot-operations/deploy-iot-ops/overview-deploy#organize-instances-by-using-sites) and [Dataflows](https://learn.microsoft.com/azure/iot-operations/connect-to-cloud/overview-dataflow).
+Azure IoT Operations is designed to bridge the gap between IT (Information Technology) and OT (Operational Technology) by providing two distinct components tailored for each group. For IT workers, Azure IoT Operations offers robust cloud-based management and analytics tools, enabling seamless integration with existing IT infrastructure and cloud services. This includes capabilities like [Azure Arc](https://learn.microsoft.com/azure/azure-arc/overview) for managing hybrid environments and [Dataflows](https://learn.microsoft.com/azure/iot-operations/connect-to-cloud/overview-dataflow) for building data pipelines. For OT workers, Azure IoT Operations provides edge solutions that ensure reliable and real-time data processing and device management on the factory floor or in other operational environments. This includes tools like [MQTT Broker](https://learn.microsoft.com/azure/iot-operations/manage-mqtt-broker/overview-iot-mq) for efficient message routing and [Data Processor](https://learn.microsoft.com/azure/iot-operations/manage-dataflows/data-processor) for on-premises data transformation. By catering to the needs of both IT and OT, Azure IoT Operations enables a unified approach to managing and optimizing industrial IoT solutions.
 
-**Sites** - Azure Arc site manager allows you to manage and monitor your on-premises environments as **Azure Arc sites**. Arc sites are scoped to an Azure resource group or subscription and enable you to track connectivity, alerts, and updates across your environment. The experience is tailored for on-premises scenarios where infrastructure is often managed within a common physical boundary, such as a store, restaurant, or factory.
+### Dataflows
 
-Please, click on View unassigned instances:
+Azure IoT Operations provides powerful tools to simplify the creation and management of dataflows, enabling seamless data movement and transformation from edge to cloud. The [Dataflows](https://learn.microsoft.com/azure/iot-operations/connect-to-cloud/overview-dataflow) feature allows you to connect various data sources, perform data operations, and enrich data, making it easier to analyze and gain insights from your IoT data. With [Data Processor](https://learn.microsoft.com/azure/iot-operations/manage-dataflows/data-processor), you can perform on-premises data transformations before sending data to its destination. These capabilities help streamline the setup of data paths, whether you need to move, transform, or enrich data, providing a robust and scalable solution for managing industrial IoT data.
 
-!IMAGE[Sites.png](instructions277358/Sites.png)
+The configuration for a Dataflow can be done using several different methods:
 
-And select your instance from the list:
+* Azure IoT Operations Experience: Design your Dataflows and Data Processor Transformations with a rich user interface and synch changes to the edge to perform on-prem contextualization.
+* Via Bicep automation: Changes are deployed on the Schema Registry and are synced to the edge.
+* With Kubernetes: Use Custom Resource Definitions (CRDs) to make Dataflow configures part of your Kubernetes artifacts.
 
-!IMAGE[Sites2.png](instructions277358/Sites2.png)
-
-In this screen, you can check monitoring metrics of the Arc enabled cluster in Sites. Now, let's move to Dataflows on the left panel:
-
-!IMAGE[Sites3.png](instructions277358/Sites3.png)
-
-**Dataflows**
-
-Dataflows is a built-in feature in Azure IoT Operations that allows you to connect various data sources and perform data operations, simplifying the setup of data paths to move, transform, and enrich data.
-As part of Dataflows, Data Processor can be use to perform on-premises transformation in the data either by using Digital Opeartions Experience or via automation.
-
-The configuration for a Dataflow can be done by means of different methods:
-* With Kubernetes and Custom Resource Definitions (CRDs). Changes are only applyed on-prem and don't sync with DOE.
-* Via Bicep automation: Changes are deployed on the Schema Registry and are synced to the edge. (Deployed Dataflows are visible on DOE).
-* Via DOE: Desig your Dataflows and Data Processor Transformations with the UX and synch changes to the edge to perform on-prem contextualization.
-
-You can write configurations for various use cases, such as:
+You can create configurations for various use cases, such as:
 
 * Transform data and send it back to MQTT
 * Transform data and send it to the cloud
 * Send data to the cloud or edge without transformation
 
+### **Step 1 - Open the Azure IoT Operations portal**
 
-By unsing DOE and the built in Dataflows interface:
+Open Microsoft Edge by clicking the icon on the desktop, then click the bookmark for the Azure IoT Operations experience portal.
 
-!IMAGE[Dataflows1.png](instructions277358/Dataflows1.png)
+!IMAGE[MQTT explorer](img/aioportal.png)
 
-You can create a new Dataflows selecting the Source, transforming data and selecting the dataflow endpoint:
+Click on Get Started and then on View unassigned instances.
 
-!IMAGE[df2.png](instructions277358/df2.png)
+!IMAGE[View unassigned](./img/viewunassigned.png)
 
-For the sake of the time and to reduce complexity during this lab, we will generate this dataflows by Bicep automation. This automation will:
+And select your instance from the list.
 
-* Select a topic from the MQTT simulator we deployed on previous steps
+!IMAGE[View instance](./img/clickinstance.png)
 
-* Send topic data to Event Hub
+### **Step 2 - Set RBAC to allow Azure IoT Operations to send data to and receive data from Event Hub**
 
-**1. To send the data to Event Hub, we need to retrieve some information on the resources already deployed in your resource group as a pre-requisite:**
+To enable Azure IoT Operations to send and receive data from Event Hub, we need to assign the appropriate roles to its managed identity. Specifically, we must assign the "Azure Event Hubs Data Sender" and "Azure Event Hubs Data Receiver" roles. These roles grant the necessary permissions for data transmission and reception. You can use the Azure CLI to perform these role assignments, and to make this a bit faster for the lab we have included a script for you to run.
 
-* EventHub Namespace:
+Return to the Terminal window and run the following command.
 
-`export eventHubNamespace=$(az eventhubs namespace list --resource-group $RESOURCE_GROUP --query '[].name' -o tsv)`
+`./setRBAC.sh`
 
-* EventHub Namespace ID:
+!IMAGE[Setting RBAC]()
 
-`export eventHubNamespaceId=$(az eventhubs namespace show --name $eventHubNamespace --resource-group $RESOURCE_GROUP --query id -o tsv)`
+### **Step 3 - Create and configure a dataflow endpoint for Azure Event Hub**
 
-* EventHub Hostname:
+Open the Azure portal and navigate to your rg-Edge resource group. Find the Event Hub resource and click on it to open.
 
-`export eventHubNamespaceHost="${eventHubNamespace}.servicebus.windows.net:9093"`
+!IMAGE[Finding Event Hub](./img/portaleventhub.png)
 
-**2. Azure IoT Operations needs to publish and subscribe to this EventHub so we need to grant permissions on the service principal for the MQTT Broker in charge of this task:**
+Next, click on Entities and then Event Hubs. The Event Hub that has been precreated for you can be used with a Dataflow Endpoint. You will need both the name of the Event Hub namespace (#1 in the screenshot), and the name of the Event Hub topic (#2 in the screenshot).
 
-* Retrieving IoT Operations extension Service Principal ID:
+!IMAGE[Finding Event Hub topic](./img/eventhubtopic.png)
 
-`export iotExtensionPrincipalId=$(az k8s-extension list --resource-group $RESOURCE_GROUP --cluster-name $CLUSTER_NAME --cluster-type connectedClusters --query "[?extensionType=='microsoft.iotoperations'].identity.principalId" -o tsv)`
+Now return to the Azure IoT Operations Experience portal and click on Dataflow Endpoints on the left, then click the button to add a new Event Hub endpoint.
 
-* Assigning Azure Event Hubs Data Sender and Receiver roles to EventHub namespace:
+!IMAGE[Create dataflow endpoint](./img/newdceh.png)
 
-`az role assignment create --assignee $iotExtensionPrincipalId --role "Azure Event Hubs Data Sender" --scope $eventHubNamespaceId`
+Enter a name for the dataflow endpoint and enter the Event Hub namespace name (#1) into the service endpoint prefix.
 
-`az role assignment create --assignee $iotExtensionPrincipalId --role "Azure Event Hubs Data Receiver" --scope $eventHubNamespaceId`
+### **Step 4 - Create a dataflow**
 
-**3. In addition to this, we also need the Custom Locations name and the eventHub in the EventHub Namespace as the parameter of the Bicep file containing the dataflows automation:**
+Now click on Dataflows on the right side to create a Dataflow.
 
-* Get CustomLocationName in a Resource Group:
+!IMAGE[Dataflow name](./img/createdataflow.png)
 
-`export customLocationName=$(az resource list --resource-group $RESOURCE_GROUP --resource-type "Microsoft.ExtendedLocation/customLocations" --query '[].name' -o tsv)`
+In the Source window, give the dataflow a name, and select MQTT as the source and "iot/#" as the topic.
 
-* List all Event Hubs in a specific namespace:
+!IMAGE[Source data](./img/dataflow_name.png)
 
-`export eventHubName=$(az eventhubs eventhub list --resource-group $RESOURCE_GROUP --namespace-name $eventHubNamespace --query '[].name' -o tsv)`
+Select the dataflow endpoint we just created.
 
-* Deploy Dataflows:
+!IMAGE[Endpoint](./img/ep2.png)
 
-`export dataflowBicepTemplatePath="dataflows.bicep"`
+For topic, enter the topic name we retrieved earlier (#2 in the screenshot)
 
-`az deployment group create --resource-group $RESOURCE_GROUP --template-file $dataflowBicepTemplatePath --parameters aioInstanceName="aio-lab460" eventHubNamespaceHost=$eventHubNamespaceHost eventHubName=$eventHubName customLocationName=$customLocationName`
+!IMAGE[Topic](./img/ep3.png)
 
-**4. Check your Dataflows deployment:**
+Proceed and then save your dataflow.
 
-* In DOE and Dataflows:
+### **Step 5 - View data on Event Hub**
 
-Please go to the DOE instance and check your new Dataflows:
+Return to the Azure portal and open your Event Hub topic and click Data Explorer.
 
-* In EventHub DataExplorer:
+!IMAGE[Data explorer](./img/ehde.png)
 
-Please go to your Resource Group in Azure Portal and navigate to your EventHub Namespaces. Then click on DataExplorer and select:
+Click view events to view the events from MQTT that have been sent to Event Hub.
+
+!IMAGE[View events](./img/viewevents.png)
+
+---
+
+Click next to continue to the next lab.
