@@ -188,7 +188,7 @@ python3 simulation.py
 
 At the prompt, view the types of scenarios that can be run.  Enter **6** and press enter.  The simulation will take several minutes to run.
 
-![screenshot of running attack simulation](../media/image/module3-defender-simulation.png)
+![screenshot of running attack simulation](../media/image/module3-defender-attack-simulation.png)
 
 After several minutes, look at the security alerts in Defender for Cloud to see additional alerts.  While these are simulated attacks running in a lab, in the real-world you'd use these alerts to trigger actions to investigate and remediate the alerts.
 
