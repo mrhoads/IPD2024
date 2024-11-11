@@ -132,6 +132,8 @@ Ultimately the reason why you configured Arc-enabled Kubernetes clusters and mon
 
 Next, you will explore an application that bill be deployed using GitOps.  The codebase to be deployed uses RTSP feeds to generate shopper insights.
 
+Inside VSCode, 
+
 
 
 ### Module 3.3 - Secure the infrastructure
@@ -168,6 +170,8 @@ exit
 
 Now, go to Defender for Cloud, and clock on the **Security Alerts** blade within the Portal. In a few minutes, you should see an alert that says, "Microsoft Defender for Cloud test alert (not a threat). (Preview)".  
 
+![screenshot of Defender for Cloud test alert](../media/image/module3-example-alert.png)
+
 You'll next run additional code that simulates suspicious activity for the following types of activity:
 * web shell - while there may be legitimate uses of this for troubleshooting, this is suspicious behavior on a cluster
 * crypo mining - this type of activity is indicative of the cluster being used for nefarious purposes
@@ -191,6 +195,9 @@ At the prompt, view the types of scenarios that can be run.  Enter **6** and pre
 ![screenshot of running attack simulation](../media/image/module3-defender-attack-simulation.png)
 
 After several minutes, look at the security alerts in Defender for Cloud to see additional alerts.  While these are simulated attacks running in a lab, in the real-world you'd use these alerts to trigger actions to investigate and remediate the alerts.
+
+
+
 
 
 
