@@ -119,13 +119,80 @@ Leave the default settings and click **Configure**
 
 ![screenshot of configuring Container Insights](../media/image/module3-enable-container-insights.png)
 
-TODO: show Insights metrics and graphs, etc.
+With Container Insights, you can use Azure as the focal point for your cluster monitoring.  
 
-By integrating Grafana for on-premises observability and Azure Monitor for cloud-based insights, you can ensure comprehensive observability of your Arc-enabled Kubernetes clusters. This dual approach provides flexibility and depth, allowing you to maintain high standards of performance and reliability across diverse environments.
 
 ### Module 3.2 - GitOps
 
+Ultimately the reason why you configured Arc-enabled Kubernetes clusters and monitor them is to deploy applications on the cluster.  While there are many ways to do this, GitOps provides a framework to ensure that what's deployed to a Kubernetes cluster is based on the code checked in to a Git repository.  Changes to the codebase are committed to the repository and updates are automatically applied.  One of the primary benefits of this approach is that managing the applications deployed to multiple clusters across the globe can centrally managed.  For example, imagine a manufacturer that has on-prem workloads in North America, South America, Europe, and Asia.  Manually pushing changes to each cluster may result in slight differences in what gets deployed.  Using GitOps, the workloads across these facilities can automatically be updated and they will reconcile themselves with the Git repository.  The diagram below illustrates the typical flow of developers, application operators, and cluster operators.
+
+![GitOps diagram](../media/image/module3-gitops-flux2-ci-cd-arch.png)
+
+# TODO: include RTSP and Shopper Insights per conversation with Dale on 9 Nov
+
+Next, you will explore an application that bill be deployed using GitOps.  The codebase to be deployed uses RTSP feeds to generate shopper insights.
+
+
+
 ### Module 3.3 - Secure the infrastructure
+Ensuring that the cluster and the workload running on it are critical for industrial applications. To do this we will use [Microsoft Defender for Containers](https://learn.microsoft.com/en-us/azure/defender-for-cloud/defender-for-containers-introduction).  Defender for Containers works by having a Defender sensor running as a [DaemonSet](https://kubernetes.io/docs/concepts/workloads/controllers/daemonset/) on each node in the cluster.  In addition, it also deploys Azure Policy for Kubernetes to centralize the enforcement of Kubernetes-specific policies.
+
+#### Onboard Cluster to Defender for Containers
+
+>[!tip] To expedite this lab, this has been enabled across the subscription
+
+To onboard your cluster, you'll do the following:
+
+1. In the Azure Portal, navigate to Defender for Cloud
+2. select **Settings**
+3. In the Defender plans, select **Containers > Settings**
+4. Turn on **Containers**
+
+#### Simulate Defender Alert
+
+With the cluster onboarded to Defender for Cloud, you'll now simulate an event to generate a Defender alert.  From the terminal, run the following steps.
+
+```shell
+kubectl create namespace defendertest
+kubectl config set-context --current --namespace defendertest
+kubectl run test-shell --rm -i --tty --image ubuntu -- bash
+```
+
+Next, run the following in the container itself:
+```shell
+cp /bin/echo ./asc_alerttest_662jfi039n
+./asc_alerttest_662jfi039n testing eicar pipe
+exit
+
+```
+
+Now, go to Defender for Cloud, and clock on the **Security Alerts** blade within the Portal. In a few minutes, you should see an alert that says, "Microsoft Defender for Cloud test alert (not a threat). (Preview)".  
+
+You'll next run additional code that simulates suspicious activity for the following types of activity:
+* web shell - while there may be legitimate uses of this for troubleshooting, this is suspicious behavior on a cluster
+* crypo mining - this type of activity is indicative of the cluster being used for nefarious purposes
+* network scanning tools - this indicates that a malicious actor is scanning the network from within the Kubernetes cluster
+* binary drift detection - this indicates that when an executable is being run that didn't come from the original container image
+
+From within the k3s cluster, run the following:
+
+```shell
+curl -O https://raw.githubusercontent.com/microsoft/Defender-for-Cloud-Attack-Simulation/refs/heads/main/simulation.py
+```
+
+Now, execute:
+
+```shell
+python3 simulation.py
+```
+
+At the prompt, view the types of scenarios that can be run.  Enter **6** and press enter.  The simulation will take several minutes to run.
+
+![screenshot of running attack simulation](../media/image/module3-defender-simulation.png)
+
+After several minutes, look at the security alerts in Defender for Cloud to see additional alerts.  While these are simulated attacks running in a lab, in the real-world you'd use these alerts to trigger actions to investigate and remediate the alerts.
+
+
 
 ## **Congratulations, you have reached the end of this lab.**
 
