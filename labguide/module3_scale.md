@@ -128,11 +128,10 @@ Ultimately the reason why you configured Arc-enabled Kubernetes clusters and mon
 
 ![GitOps diagram](../media/image/module3-gitops-flux2-ci-cd-arch.png)
 
-# TODO: include RTSP and Shopper Insights per conversation with Dale on 9 Nov
 
 Next, you will explore an application that bill be deployed using GitOps.  The codebase to be deployed uses RTSP feeds to generate shopper insights.
 
-Inside VSCode, 
+Inside VSCode, explore the contents within the **artifacts/gitops-lab**, **artifacts/rtsp**, and **artifacts/shopper-insights** directories.  These contain Helm charts used for deploying a the sample application.  While you could manually install these Helm charts, deploying through GitOps ensures that the cluster uses the underlying Git repository as the source of truth.
 
 
 
@@ -205,4 +204,4 @@ After several minutes, look at the security alerts in Defender for Cloud to see 
 
 - Call to action
 - Other sessions
-- Jumpstart linksi
+- Jumpstart links
