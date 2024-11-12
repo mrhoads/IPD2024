@@ -10,14 +10,14 @@ In this module you will use Visual Studio Code and Jupyter notebooks for interac
 
 ### **Module 1.1 - Computer Vision examples with Python**
 
-From inside VSCode, open up the ComputerVision.ipynb and follow along with the notebook.
+From inside VSCode, open up the ComputerVision.ipynb Jupyter notebook and follow along with the notebook.
 
 !IMAGE[Click notebook](./img/clickcode.png)
 
 ### **Module 1.2 - Object counting**
 
-For this exercise, open up the countingWithDifferentClassesAndVideos.ipynb and follow the prompts.
+For this exercise, open up the countingWithDifferentClassesAndVideos.ipynb Jupyter notebook and follow the prompts.
 
 ### **Module 1.3 - Real time camera feeds**
 
-For this exercise, open up the tbd.ipynb and follow the prompts.
+For this exercise, open up the Cameras.ipynb Jupyter notebook and follow the prompts.
