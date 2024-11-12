@@ -59,6 +59,16 @@ Before we can deploy Azure IOT Operations, we need to enable the custom location
 
 >[!hint]The password is @lab.VirtualMachine(UbuntuServer22.04).Password
 
+### **Step 5 - Mark this module as complete**
+
+Update the *userName* variable with the same name you used to register for the Leaderboard and run the following command in shell to define your Leaderboard username.
+
+`userName="REPLACE_ME_OR_ELSE"; userId="${userName// /}"`
+
+Run the following command to mark this module as completed.
+
+`curl -X POST "https://jsleaderboard001-cnece0effvapgbft.westus2-01.azurewebsites.net/complete_task" -H "Content-Type: application/json" -d "{\"user_id\": \"$userId\", \"task_id\": 5}"`
+
 ---
 
 ## **Module 2.2 - Deploy Azure IOT Operations**
@@ -118,6 +128,16 @@ Next, we can deploy the AIO solution. This somewhat lengthy command will take so
 !IMAGE[iot create](./img/iotcreate.png)
 
 >[!knowledge]For this lab, we are using an insecure listener for the MQ Broker. In a production environment, you can secure this endpoint using TLS and a certificate.
+
+### **Step 6 - Mark this module as complete**
+
+Update the *userName* variable with the same name you used to register for the Leaderboard and run the following command in shell to define your Leaderboard username.
+
+`userName="REPLACE_ME_OR_ELSE"; userId="${userName// /}"`
+
+Run the following command to mark this module as completed.
+
+`curl -X POST "https://jsleaderboard001-cnece0effvapgbft.westus2-01.azurewebsites.net/complete_task" -H "Content-Type: application/json" -d "{\"user_id\": \"$userId\", \"task_id\": 6}"`
 
 ---
 
@@ -254,6 +274,18 @@ Return to the Azure portal and open your Event Hub topic and click Data Explorer
 Click view events to view the events from MQTT that have been sent to Event Hub.
 
 !IMAGE[View events](./img/viewevents.png)
+
+### **Step 6 - Mark this module as complete**
+
+Update the *userName* variable with the same name you used to register for the Leaderboard and run the following command in shell to define your Leaderboard username.
+
+`userName="REPLACE_ME_OR_ELSE"; userId="${userName// /}"`
+
+Run the following command to mark this module as completed.
+
+`curl -X POST "https://jsleaderboard001-cnece0effvapgbft.westus2-01.azurewebsites.net/complete_task" -H "Content-Type: application/json" -d "{\"user_id\": \"$userId\", \"task_id\": 7}"`
+
+---
 
 ---
 
