@@ -7,7 +7,6 @@ metadata:
     clusterconfig.azure.com/use-managed-source: "true"
 spec:
   interval: 5m
-  timeout: 10m
   releaseName: gitops-lab
   chart:
     spec:
