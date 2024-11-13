@@ -36,7 +36,7 @@ helm repo update
 
 There are *lots* of different ways to configure this.  Inside VSCode, open artifacts/kube-prometheus-stack-values.yaml.
 
-![Image of values.yaml file](../media/image/module3-values-yaml.png)
+![Image of values.yaml file](./img/module3-values-yaml.png)
 
 Inside the values file, there are many different parameters that we could set.  For example, line 1019 lists a value of **adminPassword: prom-operator**.  If you wanted to change this or any of the other default parameters, we could modify the values file.
 
@@ -49,7 +49,7 @@ To actually deploy, type:
 ```shell
 helm install observability  --namespace observability --create-namespace prometheus-community/kube-prometheus-stack
 ```
-![installing observability using Helm](../media/image/module3-helm-install.png)
+![installing observability using Helm](./img/module3-helm-install.png)
 
 Verify that the pods are running with the following command:
 
@@ -67,13 +67,13 @@ With the components necessary for Prometheus and Grafana running in your cluster
 kubectl port-forward -n observability svc/observability-grafana --address 0.0.0.0 41367:80
 ```
 
-![screenshot of Kubernetes port forwarding](../media/image/module3-port-forward.png)
+![screenshot of Kubernetes port forwarding](./img/module3-port-forward.png)
 
 This command exposes a specific service, **observability-grafana** so that it can be accessed outside the cluster on port 41367, which will be forwarded to port 80.  For more information on port forwarding, refer to the [Kubernetes documentation](https://kubernetes.io/docs/tasks/access-application-cluster/port-forward-access-application-cluster/) on the topic.
 
 In your browser, go to 192.168.1.100:41367
 
-![image of Grafana login page](../media/image/module3-grafana-login.png)
+![image of Grafana login page](./img/module3-grafana-login.png)
 
 [!help]The username is **admin** and the password is **prom-operator**
 
@@ -81,7 +81,7 @@ Login with the above credentials.  When you looked at the Helm values, you saw t
 
 From the hamburger menu in the upper left, navigate to dashboards.
 
-![image of Grafana dashboards](../media/image/module3-grafana-dashboards.png)
+![image of Grafana dashboards](./img/module3-grafana-dashboards.png)
 
 There are many pre-created dashboards already available.  Click on the dashboard entitled **Kubernetes / Compute Resources / Cluster**
 
@@ -95,7 +95,7 @@ You can also explore the data through the use of [PromQL queries](https://promet
 100 - (avg(rate(node_cpu_seconds_total{mode!="idle"}[5m])) by (instance) * 100 / avg(rate(node_cpu_seconds_total[5m])) by (instance))
 
 ```
-![screenshot of PromQL query](../media/image/module3-prom-query.png)
+![screenshot of PromQL query](./img/module3-prom-query.png)
 
 This query calculates the percentage of CPU time spent in non-idle states and subtracts it from 100 to get the idle CPU percentage.  While outside the scope of this lab, writing your own queries will be useful if you instrument your own applications and want to use custom dashboards to view metrics.
 
@@ -119,13 +119,13 @@ To enable Container Insights for this Arc-enabled Kubernetes cluster, navigate t
 
 Under the Monitoring blade, find **Insights**.
 
-![screenshot of Insights on Arc-enabled Kubernetes cluster](../media/image/module3-container-insights.png).  Click on **Configure monitoring**
+![screenshot of Insights on Arc-enabled Kubernetes cluster](./img/module3-container-insights.png).  Click on **Configure monitoring**
 
 De-select **Enable Prometheus metrics** and **Enable Grafana** if checked.  Expand the Advanced Settings at the bottom of the dialogue to see the options you're presented with.  The data generated from Container Insights will be populated to the Log Analytics Workspace selected here.  In addition, note the various presets for Cost Presents.  Kubernetes generates significant amounts of data, so depending on your needs, you can alter the frequency of collection and filter the collection to only specific namespaces.
 
 Leave the default settings and click **Configure**
 
-![screenshot of configuring Container Insights](../media/image/module3-enable-container-insights.png)
+![screenshot of configuring Container Insights](./img/module3-enable-container-insights.png)
 
 With Container Insights, you can use Azure as the focal point for your cluster monitoring.
 
@@ -145,7 +145,7 @@ Run the following command to mark this module as completed.
 
 Ultimately the reason why you configured Arc-enabled Kubernetes clusters and monitor them is to deploy applications on the cluster.  While there are many ways to do this, GitOps provides a framework to ensure that what's deployed to a Kubernetes cluster is based on the code checked in to a Git repository.  Changes to the codebase are committed to the repository and updates are automatically applied.  One of the primary benefits of this approach is that managing the applications deployed to multiple clusters across the globe can centrally managed.  For example, imagine a manufacturer that has on-prem workloads in North America, South America, Europe, and Asia.  Manually pushing changes to each cluster may result in slight differences in what gets deployed.  Using GitOps, the workloads across these facilities can automatically be updated and they will reconcile themselves with the Git repository.  The diagram below illustrates the typical flow of developers, application operators, and cluster operators.
 
-![GitOps diagram](../media/image/module3-gitops-flux2-ci-cd-arch.png)
+![GitOps diagram](./img/module3-gitops-flux2-ci-cd-arch.png)
 
 Inside VSCode, explore the contents within the **artifacts/gitops-lab**, **artifacts/rtsp**, and **artifacts/shopper-insights** directories.  These contain Helm charts used for deploying a the sample application.  While you could manually install these Helm charts, deploying through GitOps ensures that the cluster uses the underlying Git repository as the source of truth.
 
@@ -187,7 +187,7 @@ exit
 
 Now, go to Defender for Cloud, and clock on the **Security Alerts** blade within the Portal. In a few minutes, you should see an alert that says, "Microsoft Defender for Cloud test alert (not a threat). (Preview)".  
 
-![screenshot of Defender for Cloud test alert](../media/image/module3-example-alert.png)
+![screenshot of Defender for Cloud test alert](./img/module3-example-alert.png)
 
 You'll next run additional code that simulates suspicious activity for the following types of activity:
 * web shell - while there may be legitimate uses of this for troubleshooting, this is suspicious behavior on a cluster
@@ -209,7 +209,7 @@ python3 simulation.py
 
 At the prompt, view the types of scenarios that can be run.  Enter **6** and press enter.  The simulation will take several minutes to run.
 
-![screenshot of running attack simulation](../media/image/module3-defender-attack-simulation.png)
+![screenshot of running attack simulation](./img/module3-defender-attack-simulation.png)
 
 After several minutes, look at the security alerts in Defender for Cloud to see additional alerts.  While these are simulated attacks running in a lab, in the real-world you'd use these alerts to trigger actions to investigate and remediate the alerts.
 
