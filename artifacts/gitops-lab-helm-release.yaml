@@ -11,3 +11,17 @@ spec:
   chart:
     spec:
       chart: ./artifacts/gitops-lab/charts/rtsp
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: shopper-insights
+  namespace: gitops-lab
+  annotations:
+    clusterconfig.azure.com/use-managed-source: "true"
+spec:
+  interval: 5m
+  releaseName: shopper-insights
+  chart:
+    spec:
+      chart: ./artifacts/gitops-lab/charts/shopper-insights
