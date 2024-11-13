@@ -1,15 +1,14 @@
-### Module 3.1 - Observability
+# Module 3.1 - Observability
 
 Lab Scenario: Implementing Observability for Arc-enabled Kubernetes Clusters
 
 In this lab, you'll explore how to observe the health and status of Arc-enabled Kubernetes clusters using Grafana and Azure Monitor. While there's overlap between these tools, this lab intends to show the core capabilities of both and discuss typical approaches used for monitoring.
 
-
 ## What do we mean by observability?
 
 Observability in Kubernetes is crucial for maintaining the performance, reliability, and availability of applications. In industrial scenarios, this is crucial because the workloads being deployed are critical for worker safety, manufacturing, and a host of other reasons.  Knowing that a system is healthy or, conversely, knowing that a system is experiencing problems is key to operate Kubernetes cluster effectively and efficiently.
 
-In addition, we can use observability tools to make data-driven decisions.  For example, how effective is a particular piece of equipment?  How much of a certain product are we producing?  
+In addition, we can use observability tools to make data-driven decisions.  For example, how effective is a particular piece of equipment?  How much of a certain product are we producing?
 
 Step 1: Setting Up Grafana and Prometheus for On-Premises Monitoring
 
@@ -17,7 +16,7 @@ Prometheus is an open-source tool that collects and stores metrics from a variet
 
 >[!knowledge] While there is an Azure-native solution, known as [Azure Managed Grafana](https://learn.microsoft.com/en-us/azure/managed-grafana/overview), this lab focuses on self-hosting this solution.
 
-Step 1. SSH into the Ubuntu k3s machine
+### **Step 1. SSH into the Ubuntu k3s machine**
 
 First, SSH to the k3s machine Step 1 - Remote into the Ubuntu server using ssh.
 
@@ -26,9 +25,9 @@ First, SSH to the k3s machine Step 1 - Remote into the Ubuntu server using ssh.
 >[!help]The password is: @lab.VirtualMachine(UbuntuServer22.04).Password
 >[!alert]The IP address of the Ubuntu server may be 192.168.1.101
 
-Step 2. Install Prometheus and Grafana using Helm
+### **Step 2. Install Prometheus and Grafana using Helm**
 
-A common way to install these tools is with Helm and the open-source [kube-prometheus-stack](https://github.com/prometheus-community/helm-charts/blob/main/charts/kube-prometheus-stack/README.md).  
+A common way to install these tools is with Helm and the open-source [kube-prometheus-stack](https://github.com/prometheus-community/helm-charts/blob/main/charts/kube-prometheus-stack/README.md).
 
 ```shell
 helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
@@ -60,7 +59,7 @@ kubectl --namespace observability get pods -l "release=observability"
 
 The above command will show the pods that were created as part of the Helm chart you installed an their status.  After a short period of time, all pods should be ready.
 
-Step 3. Familiarize yourself with Grafana
+## **Step 3. Familiarize yourself with Grafana**
 
 With the components necessary for Prometheus and Grafana running in your cluster, you'll need to temporarily expose the Grafana service outside the cluster.  In production, there are more robust ways to do this, like using an ingress controller; however, for the sake of simplicity, you'll run a port forwarding command to temporarily expose Grafana.
 
@@ -100,6 +99,15 @@ You can also explore the data through the use of [PromQL queries](https://promet
 
 This query calculates the percentage of CPU time spent in non-idle states and subtracts it from 100 to get the idle CPU percentage.  While outside the scope of this lab, writing your own queries will be useful if you instrument your own applications and want to use custom dashboards to view metrics.
 
+### **Step 4 - Mark this module as complete**
+
+Update the *userName* variable with the same name you used to register for the Leaderboard and run the following command in shell to define your Leaderboard username.
+
+`userName="REPLACE_ME_OR_ELSE"; userId="${userName// /}"`
+
+Run the following command to mark this module as completed.
+
+`curl -X POST "https://jsleaderboard001-cnece0effvapgbft.westus2-01.azurewebsites.net/complete_task" -H "Content-Type: application/json" -d "{\"user_id\": \"$userId\", \"task_id\": 8}"`
 
 ## Using Azure Monitor for Cloud-Based Insights
 
@@ -109,7 +117,7 @@ Azure Monitor provides a comprehensive solution for collecting, analyzing, and a
 
 To enable Container Insights for this Arc-enabled Kubernetes cluster, navigate to the Azure Portal and find the cluster yuo onboarded earlier.
 
-Under the Monitoring blade, find **Insights**.  
+Under the Monitoring blade, find **Insights**.
 
 ![screenshot of Insights on Arc-enabled Kubernetes cluster](../media/image/module3-container-insights.png).  Click on **Configure monitoring**
 
@@ -119,8 +127,19 @@ Leave the default settings and click **Configure**
 
 ![screenshot of configuring Container Insights](../media/image/module3-enable-container-insights.png)
 
-With Container Insights, you can use Azure as the focal point for your cluster monitoring.  
+With Container Insights, you can use Azure as the focal point for your cluster monitoring.
 
+### **Step 2 - Mark this module as complete**
+
+Update the *userName* variable with the same name you used to register for the Leaderboard and run the following command in shell to define your Leaderboard username.
+
+`userName="REPLACE_ME_OR_ELSE"; userId="${userName// /}"`
+
+Run the following command to mark this module as completed.
+
+`curl -X POST "https://jsleaderboard001-cnece0effvapgbft.westus2-01.azurewebsites.net/complete_task" -H "Content-Type: application/json" -d "{\"user_id\": \"$userId\", \"task_id\": 9}"`
+
+===
 
 ### Module 3.2 - GitOps
 
@@ -128,12 +147,11 @@ Ultimately the reason why you configured Arc-enabled Kubernetes clusters and mon
 
 ![GitOps diagram](../media/image/module3-gitops-flux2-ci-cd-arch.png)
 
-
-Next, you will explore an application that bill be deployed using GitOps.  The codebase to be deployed uses RTSP feeds to generate shopper insights.
-
 Inside VSCode, explore the contents within the **artifacts/gitops-lab**, **artifacts/rtsp**, and **artifacts/shopper-insights** directories.  These contain Helm charts used for deploying a the sample application.  While you could manually install these Helm charts, deploying through GitOps ensures that the cluster uses the underlying Git repository as the source of truth.
 
+=======
 
+Next, you will explore an application that bill be deployed using GitOps.  The codebase to be deployed uses RTSP feeds to generate shopper insights.
 
 ### Module 3.3 - Secure the infrastructure
 Ensuring that the cluster and the workload running on it are critical for industrial applications. To do this we will use [Microsoft Defender for Containers](https://learn.microsoft.com/en-us/azure/defender-for-cloud/defender-for-containers-introduction).  Defender for Containers works by having a Defender sensor running as a [DaemonSet](https://kubernetes.io/docs/concepts/workloads/controllers/daemonset/) on each node in the cluster.  In addition, it also deploys Azure Policy for Kubernetes to centralize the enforcement of Kubernetes-specific policies.
@@ -195,6 +213,15 @@ At the prompt, view the types of scenarios that can be run.  Enter **6** and pre
 
 After several minutes, look at the security alerts in Defender for Cloud to see additional alerts.  While these are simulated attacks running in a lab, in the real-world you'd use these alerts to trigger actions to investigate and remediate the alerts.
 
+### **Step 2 - Mark this module as complete**
+
+Update the *userName* variable with the same name you used to register for the Leaderboard and run the following command in shell to define your Leaderboard username.
+
+`userName="REPLACE_ME_OR_ELSE"; userId="${userName// /}"`
+
+Run the following command to mark this module as completed.
+
+`curl -X POST "https://jsleaderboard001-cnece0effvapgbft.westus2-01.azurewebsites.net/complete_task" -H "Content-Type: application/json" -d "{\"user_id\": \"$userId\", \"task_id\": 10}"`
 
 
 
