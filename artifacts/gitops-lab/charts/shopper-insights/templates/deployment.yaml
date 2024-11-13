@@ -1,0 +1,86 @@
+# kind: PersistentVolumeClaim
+# apiVersion: v1
+# metadata:
+#   name: acsa-pvc
+#   namespace: contoso-hypermarket
+# spec:
+#   accessModes:
+#     - ReadWriteMany
+#   resources:
+#     requests:
+#       storage: 10Gi
+#   storageClassName: cloud-backed-sc
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: shopper-insights-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: shopper-insights-api
+  template:
+    metadata:
+      labels:
+        app: shopper-insights-api
+    spec:
+      initContainers:
+      - name: init-download-model
+        image: mcr.microsoft.com/cbl-mariner/base/core:2.0
+        command: 
+          - sh
+          - -c
+          - |
+            tdnf update -y
+            tdnf install wget -y
+            wget -O /tmp/models/person-detection-retail-0013.bin https://download.microsoft.com/download/ad457769-60e2-4e4b-8756-8d9fada0b60a/person-detection-retail-0013.bin
+            wget -O /tmp/models/person-detection-retail-0013.xml https://download.microsoft.com/download/ad457769-60e2-4e4b-8756-8d9fada0b60a/person-detection-retail-0013.xml
+            wget -O /tmp/models/person-reidentification-retail-0287.bin https://download.microsoft.com/download/ad457769-60e2-4e4b-8756-8d9fada0b60a/person-reidentification-retail-0287.bin
+            wget -O /tmp/models/person-reidentification-retail-0287.xml https://download.microsoft.com/download/ad457769-60e2-4e4b-8756-8d9fada0b60a/person-reidentification-retail-0287.xml
+            wget -O /tmp/models/age-gender-recognition-retail-0013.bin https://download.microsoft.com/download/ad457769-60e2-4e4b-8756-8d9fada0b60a/age-gender-recognition-retail-0013.bin
+            wget -O /tmp/models/age-gender-recognition-retail-0013.xml https://download.microsoft.com/download/ad457769-60e2-4e4b-8756-8d9fada0b60a/age-gender-recognition-retail-0013.xml
+        volumeMounts:
+        - name: models-volume
+          mountPath: /tmp/models
+        # - name: blob
+        #   mountPath: /usr/src/app/detected_persons
+      containers:
+      - name: shopper-insights-api
+        image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        ports:
+        - containerPort: 5001
+        env:
+        - name: MODEL_PATH
+          value: "/tmp/models/"
+        - name: RTSP_URL
+          value: "rtsp://rtsp-stream-aisle.contoso-hypermarket.svc.cluster.local:8554/stream"
+        - name: FLASK_PORT
+          value: "5001"
+        - name: ENABLE_SAVING
+          value: "False"
+        - name: PROCESSOR_SKIP_FPS
+          value: "15"
+        {{- if (lookup "v1" "Namespace" "" "gpu-operator") }}
+        resources:
+          limits:
+            nvidia.com/gpu: "1"
+        {{- end }}
+        volumeMounts:
+        - mountPath: /tmp/models
+          name: models-volume
+        # - mountPath: /usr/src/app/detected_persons
+        #   name: blob
+        - mountPath: /usr/src/app/detected_frames
+          name: frames-volume
+      volumes:
+      - name: models-volume
+        persistentVolumeClaim:
+          claimName: shopper-model-pvc
+      # - name: blob
+      #   persistentVolumeClaim:
+      #     claimName: acsa-pvc
+      - name: frames-volume
+        persistentVolumeClaim:
+          claimName: frames-pvc
