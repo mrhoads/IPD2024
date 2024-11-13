@@ -129,14 +129,6 @@ Leave the default settings and click **Configure**
 
 With Container Insights, you can use Azure as the focal point for your cluster monitoring.
 
-### Module 3.2 - GitOps
-
-Ultimately the reason why you configured Arc-enabled Kubernetes clusters and monitor them is to deploy applications on the cluster.  While there are many ways to do this, GitOps provides a framework to ensure that what's deployed to a Kubernetes cluster is based on the code checked in to a Git repository.  Changes to the codebase are committed to the repository and updates are automatically applied.  One of the primary benefits of this approach is that managing the applications deployed to multiple clusters across the globe can centrally managed.  For example, imagine a manufacturer that has on-prem workloads in North America, South America, Europe, and Asia.  Manually pushing changes to each cluster may result in slight differences in what gets deployed.  Using GitOps, the workloads across these facilities can automatically be updated and they will reconcile themselves with the Git repository.  The diagram below illustrates the typical flow of developers, application operators, and cluster operators.
-
-![GitOps diagram](../media/image/module3-gitops-flux2-ci-cd-arch.png)
-
-# TODO: include RTSP and Shopper Insights per conversation with Dale on 9 Nov
-
 ### **Step 2 - Mark this module as complete**
 
 Update the *userName* variable with the same name you used to register for the Leaderboard and run the following command in shell to define your Leaderboard username.
@@ -146,6 +138,18 @@ Update the *userName* variable with the same name you used to register for the L
 Run the following command to mark this module as completed.
 
 `curl -X POST "https://jsleaderboard001-cnece0effvapgbft.westus2-01.azurewebsites.net/complete_task" -H "Content-Type: application/json" -d "{\"user_id\": \"$userId\", \"task_id\": 9}"`
+
+===
+
+### Module 3.2 - GitOps
+
+Ultimately the reason why you configured Arc-enabled Kubernetes clusters and monitor them is to deploy applications on the cluster.  While there are many ways to do this, GitOps provides a framework to ensure that what's deployed to a Kubernetes cluster is based on the code checked in to a Git repository.  Changes to the codebase are committed to the repository and updates are automatically applied.  One of the primary benefits of this approach is that managing the applications deployed to multiple clusters across the globe can centrally managed.  For example, imagine a manufacturer that has on-prem workloads in North America, South America, Europe, and Asia.  Manually pushing changes to each cluster may result in slight differences in what gets deployed.  Using GitOps, the workloads across these facilities can automatically be updated and they will reconcile themselves with the Git repository.  The diagram below illustrates the typical flow of developers, application operators, and cluster operators.
+
+![GitOps diagram](../media/image/module3-gitops-flux2-ci-cd-arch.png)
+
+Inside VSCode, explore the contents within the **artifacts/gitops-lab**, **artifacts/rtsp**, and **artifacts/shopper-insights** directories.  These contain Helm charts used for deploying a the sample application.  While you could manually install these Helm charts, deploying through GitOps ensures that the cluster uses the underlying Git repository as the source of truth.
+
+=======
 
 Next, you will explore an application that bill be deployed using GitOps.  The codebase to be deployed uses RTSP feeds to generate shopper insights.
 
@@ -183,6 +187,8 @@ exit
 
 Now, go to Defender for Cloud, and clock on the **Security Alerts** blade within the Portal. In a few minutes, you should see an alert that says, "Microsoft Defender for Cloud test alert (not a threat). (Preview)".  
 
+![screenshot of Defender for Cloud test alert](../media/image/module3-example-alert.png)
+
 You'll next run additional code that simulates suspicious activity for the following types of activity:
 * web shell - while there may be legitimate uses of this for troubleshooting, this is suspicious behavior on a cluster
 * crypo mining - this type of activity is indicative of the cluster being used for nefarious purposes
@@ -218,8 +224,11 @@ Run the following command to mark this module as completed.
 `curl -X POST "https://jsleaderboard001-cnece0effvapgbft.westus2-01.azurewebsites.net/complete_task" -H "Content-Type: application/json" -d "{\"user_id\": \"$userId\", \"task_id\": 10}"`
 
 
+
+
+
 ## **Congratulations, you have reached the end of this lab.**
 
 - Call to action
 - Other sessions
-- Jumpstart linksi
+- Jumpstart links
