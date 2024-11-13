@@ -10,4 +10,4 @@ spec:
   releaseName: gitops-lab
   chart:
     spec:
-      chart: ./artifacts/gitops-lab/charts/gitops-lab
+      chart: ./artifacts/gitops-lab/charts/rtsp
