@@ -2,14 +2,7 @@
 
 ## Overview
 
-This repository contains the lab guides and resources for the IPD2024 course. The labs cover various topics in computer vision and use tools such as Visual Studio Code and Jupyter notebooks.
-
-## Labs
-
-- **Lab 1 - Computer vision in action**
-  - Introduction to Computer Vision
-  - Using Jupyter notebooks in VS Code
-  - Example computer vision scenarios for industry with Python
+This repository contains the lab guides and resources for the IPD2024 course. The labs cover various topics in computer vision and industry IOT and use tools such as Visual Studio Code and Jupyter notebooks.
 
 ## Getting Started
 
