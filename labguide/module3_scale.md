@@ -207,7 +207,13 @@ With Container Insights, you can use Azure as the focal point for your cluster m
 
 >[!alert] It may take several minutes for the data from Container Insights to be visible within the Azure Portal
 
-After Container Insights is configured on the cluster, go to the Azure Portal
+After Container Insights is configured on the cluster, go to the Insights blade on your cluster.  Explore the metrics for the cluster, reports, nodes, controllers, and containers.
+
+![screenshot of Container insights cluster metrics](./img/module3-insights-metrics.png)
+
+Finally, explore the Logs, Metrics, and Workbooks sections in the Azure Portal under Monitoring to see how Azure Monitor can be used to view the health and status of your cluster.
+
+![screenshot of Monitoring section for cluster](./img/module3-monitoring.png)
 
 ---
 
