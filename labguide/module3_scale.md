@@ -209,16 +209,6 @@ With Container Insights, you can use Azure as the focal point for your cluster m
 
 After Container Insights is configured on the cluster, go to the Azure Portal
 
-#### **Step 3 - Mark this module as complete**
-
-Update the *userName* variable with the same name you used to register for the Leaderboard and run the following command in shell to define your Leaderboard username.
-
-`userName="REPLACE_ME_PRETTY_PLEASE"; userId="${userName// /}"`
-
-Run the following command to mark this module as completed.
-
-`curl -X POST "https://jsleaderboard001-cnece0effvapgbft.westus2-01.azurewebsites.net/complete_task" -H "Content-Type: application/json" -d "{\"user_id\": \"$userId\", \"task_id\": 9}"`
-
 ---
 
 ### **Module 3.3 - GitOps**
@@ -336,6 +326,12 @@ Refresh the GitOps blade in the Portal and check the status of the deployment.  
 
 ## **Congratulations, you have reached the end of this lab.**
 
-- Call to action
-- Other sessions
-- Jumpstart links
+#### Mark this module as complete**
+
+Update the *userName* variable with the same name you used to register for the Leaderboard and run the following command in shell to define your Leaderboard username.
+
+`userName="REPLACE_ME_PRETTY_PLEASE"; userId="${userName// /}"`
+
+Run the following command to mark this module as completed.
+
+`curl -X POST "https://jsleaderboard001-cnece0effvapgbft.westus2-01.azurewebsites.net/complete_task" -H "Content-Type: application/json" -d "{\"user_id\": \"$userId\", \"task_id\": 9}"`
