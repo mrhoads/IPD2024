@@ -28,25 +28,29 @@ From inside VSCode, open up the ComputerVision.ipynb Jupyter notebook and follow
 
 !IMAGE[Click notebook](./img/clickcode.png)
 
-#### Notebook 1 - Computer Vision
+#### Notebook 1 - Register for the task board
 
-Click on the notebook _ComputerVision.ipynb_ to open it, then follow the along with the instructions.
+Click on the notebook _**1-Register.ipynb**_ to open it, then follow along with the instructions.
 
-### Notebook 2 - Counting objects
+#### Notebook 2 - Computer Vision
 
-Click on the notebook _CountingObjects.ipynb_ to open it, then follow the along with the instructions.
+Click on the notebook _**2-ComputerVision.ipynb**_ to open it, then follow the along with the instructions.
 
-#### Notebook 3 - Meter reader
+### Notebook 3 - Counting objects
 
-Click on the notebook _Meter-Reader.ipynb_ to open it, then follow the along with the instructions.
+Click on the notebook _**3-CountingObjects.ipynb**_ to open it, then follow the along with the instructions.
 
-#### Notebook 4 - Azure AI Services with GPT-4o
+#### Notebook 4 - Meter reader
 
-Click on the notebook _AzureAI-GPT4o.ipynb_ to open it, then follow the along with the instructions.
+Click on the notebook _4-**Meter-Reader.ipynb**_ to open it, then follow the along with the instructions.
 
-#### Notebook 5 - In-room camera
+#### Notebook 5 - Azure AI Services with GPT-4o
 
-Click on the notebook _Camera.ipynb_ to open it, then follow the along with the instructions.
+Click on the notebook _**5-AzureAI-GPT4o.ipynb**_ to open it, then follow the along with the instructions.
+
+#### Notebook 6 - In-room camera
+
+Click on the notebook _**6-Camera.ipynb**_ to open it, then follow the along with the instructions.
 
 ---
 Click Next to proceed to the next module.
