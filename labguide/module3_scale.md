@@ -1,4 +1,4 @@
-## **Module 3.1 - Observability**
+## **Module 3 - Scale and operate**
 
 Lab Scenario: Implementing Security, Observability, and GitOps for Arc-enabled Kubernetes Clusters
 
@@ -27,11 +27,13 @@ To onboard your cluster, you'll do the following:
 
 #### **Wait for Defender Sensor to be deployed**
 
-It may take several minutes for the Defender for Container resources to be deployed on your Kubernetes cluster.  Run `kubectl get pods -n mdc -w` to watch the status of this being deployed.
+First, SSH to the k3s machine if you aren't in an SSH session already from the previous exercise.
 
->[!tip] Wait for the pods in the **mdc** namespace to be running before proceeding to simulate the Defender alert.
+    ssh 192.168.1.100
 
-#### Simulate Defender Alert
+>[!note] It may take several minutes for the Defender for Container resources to be deployed on your Kubernetes cluster.  Run `kubectl get pods -n mdc -w` to watch the status of this being deployed. If you don't want to wait, you can [continue on to Observability](#module-32---observability) and return later to complete the attack simulation.
+
+#### **Simulate Defender Alert**
 
 With the cluster onboarded to Defender for Cloud, you'll now simulate an event to generate a Defender alert.  From the terminal, run the following steps.
 
@@ -45,8 +47,6 @@ Next, run the following in the container itself:
 ```shell
 cp /bin/echo ./asc_alerttest_662jfi039n
 ./asc_alerttest_662jfi039n testing eicar pipe
-exit
-
 ```
 
 Now, go to Defender for Cloud, and clock on the **Security Alerts** blade within the Portal. In a few minutes, you should see an alert that says, "Microsoft Defender for Cloud test alert (not a threat). (Preview)".  
@@ -77,15 +77,7 @@ At the prompt, view the types of scenarios that can be run.  Enter **6** and pre
 
 After several minutes, look at the security alerts in Defender for Cloud to see additional alerts.  While these are simulated attacks running in a lab, in the real-world you'd use these alerts to trigger actions to investigate and remediate the alerts.
 
-### **Step 2 - Mark this module as complete**
-
-Update the *userName* variable with the same name you used to register for the Leaderboard and run the following command in shell to define your Leaderboard username.
-
-`userName="REPLACE_ME_OR_ELSE"; userId="${userName// /}"`
-
-Run the following command to mark this module as completed.
-
-`curl -X POST "https://jsleaderboard001-cnece0effvapgbft.westus2-01.azurewebsites.net/complete_task" -H "Content-Type: application/json" -d "{\"user_id\": \"$userId\", \"task_id\": 9}"`
+---
 
 ## **Module 3.2 - Observability**
 
@@ -95,22 +87,19 @@ Observability in Kubernetes is crucial for maintaining the performance, reliabil
 
 In addition, we can use observability tools to make data-driven decisions.  For example, how effective is a particular piece of equipment?  How much of a certain product are we producing?
 
-Step 1: Setting Up Grafana and Prometheus for On-Premises Monitoring
-
 Prometheus is an open-source tool that collects and stores metrics from a variety of sources in real-time.  Grafana is an open-source data analytics and visualization tool.  In this lab, you will deploy Prometheus and Grafana within your on-premises Arc-enabled Kubernetes cluster. Grafana will be configured to collect and display metrics from Prometheus, a popular monitoring tool for Kubernetes.
 
 >[!knowledge] While there is an Azure-native solution, known as [Azure Managed Grafana](https://learn.microsoft.com/en-us/azure/managed-grafana/overview), this lab focuses on self-hosting this solution.
 
-### **Step 1. SSH into the Ubuntu k3s machine**
+#### **Step 1 - SSH into the Ubuntu k3s machine**
+Remote into the Ubuntu server using ssh.
 
-First, SSH to the k3s machine Step 1 - Remote into the Ubuntu server using ssh.
-
-    ssh 192.168.1.100
+`ssh 192.168.1.100`
 
 >[!help]The password is: @lab.VirtualMachine(UbuntuServer22.04).Password
 >[!alert]The IP address of the Ubuntu server may be 192.168.1.101
 
-### **Step 2. Install Prometheus and Grafana using Helm**
+#### **Step 2 - Install Prometheus and Grafana using Helm**
 
 A common way to install these tools is with Helm and the open-source [kube-prometheus-stack](https://github.com/prometheus-community/helm-charts/blob/main/charts/kube-prometheus-stack/README.md).
 
@@ -144,7 +133,7 @@ kubectl --namespace observability get pods -l "release=observability"
 
 The above command will show the pods that were created as part of the Helm chart you installed an their status.  After a short period of time, all pods should be ready.
 
-## **Step 3. Familiarize yourself with Grafana**
+#### **Step 3 - Familiarize yourself with Grafana**
 
 With the components necessary for Prometheus and Grafana running in your cluster, you'll need to temporarily expose the Grafana service outside the cluster.  In production, there are more robust ways to do this, like using an ingress controller; however, for the sake of simplicity, you'll run a port forwarding command to temporarily expose Grafana.
 
@@ -184,27 +173,25 @@ You can also explore the data through the use of [PromQL queries](https://promet
 
 This query calculates the percentage of CPU time spent in non-idle states and subtracts it from 100 to get the idle CPU percentage.  While outside the scope of this lab, writing your own queries will be useful if you instrument your own applications and want to use custom dashboards to view metrics.
 
-### **Step 4 - Mark this module as complete**
+#### **Step 4 - Mark this module as complete**
 
 Update the *userName* variable with the same name you used to register for the Leaderboard and run the following command in shell to define your Leaderboard username.
 
-`userName="REPLACE_ME_OR_ELSE"; userId="${userName// /}"`
+`userName="REPLACE_ME_PRETTY_PLEASE"; userId="${userName// /}"`
 
 Run the following command to mark this module as completed.
 
 `curl -X POST "https://jsleaderboard001-cnece0effvapgbft.westus2-01.azurewebsites.net/complete_task" -H "Content-Type: application/json" -d "{\"user_id\": \"$userId\", \"task_id\": 8}"`
 
-## **Using Azure Monitor for Cloud-Based Insights**
+### **Using Azure Monitor for Cloud-Based Insights**
 
 Azure Monitor provides a comprehensive solution for collecting, analyzing, and acting on telemetry data from resources running directly in Azure as well as on-premises resources. For Arc-enabled Kubernetes clusters, Azure Monitor helps extend observability into the cloud, ensuring you have a centralized view of your cluster's health.
 
-### **Step 1 - Enable Container Insights**
+#### **Step 1 - Enable Container Insights**
 
 To enable Container Insights for this Arc-enabled Kubernetes cluster, navigate to the Azure Portal and find the cluster you onboarded earlier.  Under the Monitoring blade, find **Insights**.
 
-
 ![sceenshot of Insights section of Poratl](./img/module3-configure-insights-blade.png)
-
 
 Click on **Configure monitoring**
 
@@ -216,7 +203,7 @@ Leave the default settings and click **Configure**
 
 With Container Insights, you can use Azure as the focal point for your cluster monitoring.
 
-### **Step 2 - View Cluster Data in Azure Monitor**
+#### **Step 2 - View Cluster Data in Azure Monitor**
 
 >[!alert] It may take several minutes for the data from Container Insights to be visible within the Azure Portal
 
@@ -228,29 +215,19 @@ Finally, explore the Logs, Metrics, and Workbooks sections in the Azure Portal u
 
 ![screenshot of Monitoring section for cluster](./img/module3-monitoring.png)
 
+---
 
-### **Step 3 - Mark this module as complete**
-
-Update the *userName* variable with the same name you used to register for the Leaderboard and run the following command in shell to define your Leaderboard username.
-
-`userName="REPLACE_ME_OR_ELSE"; userId="${userName// /}"`
-
-Run the following command to mark this module as completed.
-
-`curl -X POST "https://jsleaderboard001-cnece0effvapgbft.westus2-01.azurewebsites.net/complete_task" -H "Content-Type: application/json" -d "{\"user_id\": \"$userId\", \"task_id\": 9}"`
-
-
-## **Module 3.3 - GitOps**
+### **Module 3.3 - GitOps**
 
 Ultimately the reason why you configured Arc-enabled Kubernetes clusters and monitor them is to deploy applications on the cluster.  While there are many ways to do this, GitOps provides a framework to ensure that what's deployed to a Kubernetes cluster is based on the code checked in to a Git repository.  Changes to the codebase are committed to the repository and updates are automatically applied.  One of the primary benefits of this approach is that managing the applications deployed to multiple clusters across the globe can centrally managed.  For example, imagine a manufacturer that has on-prem workloads in North America, South America, Europe, and Asia.  Manually pushing changes to each cluster may result in slight differences in what gets deployed.  Using GitOps, the workloads across these facilities can automatically be updated and they will reconcile themselves with the Git repository.  The diagram below illustrates the typical flow of developers, application operators, and cluster operators.
 
 ![GitOps diagram](./img/module3-gitops-flux2-ci-cd-arch.png)
 
-### **Step 1. Browse the Manifests**
+#### **Step 1 - Browse the Manifests**
 
 Inside VSCode, explore the contents within the **artifacts/gitops-lab/rtsp** and **artifacts/gitops-lab/shopper-insights** directories.  These contain Kubernetes manifestss used for deploying a the sample application.  While you could manually apply these manifests using `kubectl`, deploying through GitOps ensures that the cluster uses the underlying Git repository as the source of truth.
 
-### **Step 2. Enable GitOps on Cluster**
+#### **Step 2 - Enable GitOps on Cluster**
 
 In the Azure Portal, navigate to your Arc-enabled Kubernetes cluster.  Under Settings, go to the GitOps blade.
 
@@ -290,7 +267,6 @@ On the _Source_ screen, enter the following to match the sceenshot below:
 ![screenshot of GitOps source configuration](./img/module3-gitops-source.png)
 
 Click **Next**
-
 
 On the _Kustomizations_ screen, click on **Create**
 
@@ -346,16 +322,22 @@ With both Kustomizations in place, click **Next**.  On the _Review + create_ scr
 
 It will take several minutes for the Flux extension to be installed and the GitOps configuration to be applied.  During this time, run `kubectl get pods -A -w` to watch the flux-system pods be deployed and continue watching for pods to appear in the gitops-lab namespace.
 
-### **Step 3. Verify GitOps Compliance**
+#### **Step 3 - Verify GitOps Compliance**
 
 >[!alert] It will take several minutes for the GitOps configuration to be fully applied
 
 ![screenshot of GitOps compliance](./img/module3-gitops-compliant.png)
 
 Refresh the GitOps blade in the Portal and check the status of the deployment.  During this time, you may see a _Compliance state_ of **Non-Compliant** while the manifests are fully deployed.  After a successful deployment, the GitOps configuration will show that it's compliant.  While outside the scope of this lab, consider how using [GitOps configurations along with Azure Policy](https://learn.microsoft.com/azure/azure-arc/kubernetes/use-azure-policy-flux-2) could be used to enforce compliance across multiple clusters.
-    
+
 ## **Congratulations, you have reached the end of this lab.**
 
-- Call to action
-- Other sessions
-- Jumpstart links
+#### Mark this module as complete**
+
+Update the *userName* variable with the same name you used to register for the Leaderboard and run the following command in shell to define your Leaderboard username.
+
+`userName="REPLACE_ME_PRETTY_PLEASE"; userId="${userName// /}"`
+
+Run the following command to mark this module as completed.
+
+`curl -X POST "https://jsleaderboard001-cnece0effvapgbft.westus2-01.azurewebsites.net/complete_task" -H "Content-Type: application/json" -d "{\"user_id\": \"$userId\", \"task_id\": 9}"`
