@@ -1,20 +1,9 @@
-# kind: PersistentVolumeClaim
-# apiVersion: v1
-# metadata:
-#   name: acsa-pvc
-#   namespace: contoso-hypermarket
-# spec:
-#   accessModes:
-#     - ReadWriteMany
-#   resources:
-#     requests:
-#       storage: 10Gi
-#   storageClassName: cloud-backed-sc
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: shopper-insights-api
+  namespace: gitops-lab
 spec:
   replicas: 1
   selector:
@@ -47,26 +36,21 @@ spec:
         #   mountPath: /usr/src/app/detected_persons
       containers:
       - name: shopper-insights-api
-        image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
-        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        image: mcr.microsoft.com/jumpstart/agora/shopper_insights_api:1.0.0
+        imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 5001
         env:
         - name: MODEL_PATH
           value: "/tmp/models/"
         - name: RTSP_URL
-          value: "rtsp://rtsp-stream-aisle.contoso-hypermarket.svc.cluster.local:8554/stream"
+          value: "rtsp://rtsp-stream-aisle.gitops-lab.svc.cluster.local:8554/stream"
         - name: FLASK_PORT
           value: "5001"
         - name: ENABLE_SAVING
           value: "False"
         - name: PROCESSOR_SKIP_FPS
           value: "15"
-        {{- if (lookup "v1" "Namespace" "" "gpu-operator") }}
-        resources:
-          limits:
-            nvidia.com/gpu: "1"
-        {{- end }}
         volumeMounts:
         - mountPath: /tmp/models
           name: models-volume

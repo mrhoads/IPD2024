@@ -2,6 +2,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: shopper-insights-api
+  namespace: gitops-lab
   labels:
     app: shopper-insights-service
 spec:
@@ -10,6 +11,6 @@ spec:
   ports:
     - name: shopper-insights-metrics
       protocol: TCP
-      port: {{ .Values.service.port }}
+      port: 5001
       targetPort: 5001
-  type: {{ .Values.service.type }}
+  type: LoadBalancer

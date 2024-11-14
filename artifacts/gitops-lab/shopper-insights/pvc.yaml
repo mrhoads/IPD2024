@@ -2,6 +2,7 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: shopper-model-pvc
+  namespace: gitops-lab
 spec:
   accessModes:
     - ReadWriteOnce
@@ -13,6 +14,7 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: frames-pvc
+  namespace: gitops-lab
 spec:
   accessModes:
     - ReadWriteOnce
