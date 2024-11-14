@@ -16,11 +16,14 @@ To onboard your cluster, you'll do the following:
 
 1. In the Azure Portal, navigate to Defender for Cloud
 2. Under Management, navigate to **Environment settings**
+
+    ![screenshot of Environment settings](./img/module3-environment-settings.png)
 3. Select your subscription
 4. Under Cloud Workload Protection (CWP), navigate to **Containers > Settings**
 
-    ![screenshot of Cloud Workload Protection for Containers](../media/image/module3-cwp-containers.png)
+    ![screenshot of Cloud Workload Protection for Containers](./img/module3-defender-plan-containers.png)
 4. Turn on **Containers**
+5. Click **Save**
 
 #### Wait for Defender Sensor to be deployed
 
