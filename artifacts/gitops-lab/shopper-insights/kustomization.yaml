@@ -5,5 +5,4 @@ resources:
   - pvc.yaml
   - prometheus.yaml
   - deployment.yaml
-  - shopper-insights-trigger.yaml
   - service.yaml
