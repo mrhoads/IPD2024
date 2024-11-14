@@ -219,15 +219,17 @@ Open the Azure portal and navigate to your rg-Edge resource group. Find the Even
 
 !IMAGE[Finding Event Hub](./img/portaleventhub.png)
 
-Next, click on Entities and then Event Hubs. The Event Hub that has been precreated for you can be used with a Dataflow Endpoint. You will need both the name of the Event Hub namespace (#1 in the screenshot), and the name of the Event Hub topic (#2 in the screenshot).
+Next, click on Entities and then Event Hubs. The Event Hub that has been precreated for you can be used with a Dataflow Endpoint. You will need both the name of the Event Hub namespace (#1 in the screenshot), and the name of the Event Hub (#2 in the screenshot).
 
-!IMAGE[Finding Event Hub topic](./img/eventhubtopic.png)
+!IMAGE[Finding Event Hub](./img/eventhubtopic.png)
 
 Now return to the Azure IoT Operations Experience portal and click on Dataflow Endpoints on the left, then click the button to add a new Event Hub endpoint.
 
 !IMAGE[Create dataflow endpoint](./img/newdceh.png)
 
-Enter a name for the dataflow endpoint and enter the Event Hub namespace name (#1) into the service endpoint prefix.
+Enter a name for the dataflow endpoint and enter the Event Hub namespace name (#1) into the service endpoint prefix. Press Apply when finished.
+
+!IMAGE[Create dataflow endpoint detail](./img/create_endpoint_namespace.png)
 
 ### **Step 4 - Create a dataflow**
 
@@ -243,7 +245,7 @@ Select the dataflow endpoint we just created.
 
 !IMAGE[Endpoint](./img/ep2.png)
 
-For topic, enter the topic name we retrieved earlier (#2 in the screenshot)
+For topic, enter the name of the event hub we retrieved earlier (#2 in the screenshot)
 
 !IMAGE[Topic](./img/ep3.png)
 
