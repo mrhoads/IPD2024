@@ -6,11 +6,11 @@ Computer vision is a field of artificial intelligence that enables computers to 
 
 Azure provides robust tools for computer vision through [Azure AI Services](https://azure.microsoft.com/en-us/products/ai-services/ai-vision/), which allows developers to build and deploy object detection models tailored to their specific needs. Azure AI Vision enables the detection and identification of objects within images, making it easier to analyze visual data and gain actionable insights, thereby enhancing the capabilities of applications across various industries.
 
-### Jupyter notebooks
+### **Jupyter notebooks**
 
 In this module you will use Visual Studio Code and [Jupyter notebooks](https://jupyter.org/) for interactive data analysis and visualization using the [Python](https://www.python.org/) programming language.
 
-#### Using Jupyter Notebooks in VS Code
+#### **Using Jupyter Notebooks in VS Code**
 
 - **Run Cells**: Click the play button next to a cell to run it and see the output.
 
@@ -24,7 +24,7 @@ In this module you will use Visual Studio Code and [Jupyter notebooks](https://j
 
 From inside VSCode, open up the _1-Register.ipynb_ Jupyter notebook to get started. If you need assistance please ask one of the lab speakers for help.
 
-!IMAGE[Click notebook](./img/clickcode.png)
+!IMAGE[Click notebook](./img/register-notebook.png)
 
 #### Notebook 1 - Register for the task board
 
