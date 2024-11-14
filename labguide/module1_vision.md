@@ -10,8 +10,6 @@ Azure provides robust tools for computer vision through [Azure AI Services](http
 
 In this module you will use Visual Studio Code and [Jupyter notebooks](https://jupyter.org/) for interactive data analysis and visualization using the [Python](https://www.python.org/) programming language.
 
-You should have already cloned the lab GitHub repository in the previous section of the lab guide. If you didn't, please do so now.
-
 #### Using Jupyter Notebooks in VS Code
 
 - **Run Cells**: Click the play button next to a cell to run it and see the output.
@@ -24,7 +22,7 @@ You should have already cloned the lab GitHub repository in the previous section
 
 ### **Module 1 - Example computer vision scenarios for industry with Python**
 
-From inside VSCode, open up the ComputerVision.ipynb Jupyter notebook and follow along with the notebook.
+From inside VSCode, open up the _1-Register.ipynb_ Jupyter notebook to get started. If you need assistance please ask one of the lab speakers for help.
 
 !IMAGE[Click notebook](./img/clickcode.png)
 
