@@ -1,2 +1,8 @@
 video_frames/
 notebooks/models/
+*.tar.gz
+notebooks/data/
+notebooks/models
+notebooks/model/
+notebook_utils.py
+notebooks/__pycache__/notebook_utils.cpython-312.pyc
