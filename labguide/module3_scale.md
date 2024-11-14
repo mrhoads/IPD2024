@@ -81,7 +81,7 @@ After several minutes, look at the security alerts in Defender for Cloud to see 
 
 Update the *userName* variable with the same name you used to register for the Leaderboard and run the following command in shell to define your Leaderboard username.
 
-`userName="REPLACE_ME_OR_ELSE"; userId="${userName// /}"`
+`userName="REPLACE_ME_PRETTY_PLEASE"; userId="${userName// /}"`
 
 Run the following command to mark this module as completed.
 
@@ -188,7 +188,7 @@ This query calculates the percentage of CPU time spent in non-idle states and su
 
 Update the *userName* variable with the same name you used to register for the Leaderboard and run the following command in shell to define your Leaderboard username.
 
-`userName="REPLACE_ME_OR_ELSE"; userId="${userName// /}"`
+`userName="REPLACE_ME_PRETTY_PLEASE"; userId="${userName// /}"`
 
 Run the following command to mark this module as completed.
 
@@ -227,7 +227,7 @@ After Container Insights is configured on the cluster, go to the Azure Portal
 
 Update the *userName* variable with the same name you used to register for the Leaderboard and run the following command in shell to define your Leaderboard username.
 
-`userName="REPLACE_ME_OR_ELSE"; userId="${userName// /}"`
+`userName="REPLACE_ME_PRETTY_PLEASE"; userId="${userName// /}"`
 
 Run the following command to mark this module as completed.
 

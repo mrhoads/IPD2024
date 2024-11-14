@@ -63,7 +63,7 @@ Before we can deploy Azure IOT Operations, we need to enable the custom location
 
 Update the *userName* variable with the same name you used to register for the Leaderboard and run the following command in shell to define your Leaderboard username.
 
-`userName="REPLACE_ME_OR_ELSE"; userId="${userName// /}"`
+`userName="REPLACE_ME_PRETTY_PLEASE"; userId="${userName// /}"`
 
 Run the following command to mark this module as completed.
 
@@ -133,7 +133,7 @@ Next, we can deploy the AIO solution. This somewhat lengthy command will take so
 
 Update the *userName* variable with the same name you used to register for the Leaderboard and run the following command in shell to define your Leaderboard username.
 
-`userName="REPLACE_ME_OR_ELSE"; userId="${userName// /}"`
+`userName="REPLACE_ME_PRETTY_PLEASE"; userId="${userName// /}"`
 
 Run the following command to mark this module as completed.
 
@@ -283,7 +283,7 @@ Click view events to view the events from MQTT that have been sent to Event Hub.
 
 Update the *userName* variable with the same name you used to register for the Leaderboard and run the following command in shell to define your Leaderboard username.
 
-`userName="REPLACE_ME_OR_ELSE"; userId="${userName// /}"`
+`userName="REPLACE_ME_PRETTY_PLEASE"; userId="${userName// /}"`
 
 Run the following command to mark this module as completed.
 
