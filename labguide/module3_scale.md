@@ -1,10 +1,95 @@
-# Module 3.1 - Observability
+## **Module 3.1 - Observability**
 
-Lab Scenario: Implementing Observability for Arc-enabled Kubernetes Clusters
+Lab Scenario: Implementing Security, Observability, and GitOps for Arc-enabled Kubernetes Clusters
 
-In this lab, you'll explore how to observe the health and status of Arc-enabled Kubernetes clusters using Grafana and Azure Monitor. While there's overlap between these tools, this lab intends to show the core capabilities of both and discuss typical approaches used for monitoring.
+In this lab, you'll explore how to secure Arc-enabled Kubernetes clusters, observe the health and status of Arc-enabled Kubernetes clusters using Grafana and Azure Monitor, and deploy applications to the clusters using GitOps.
 
-## What do we mean by observability?
+## **Module 3.1 - Secure the infrastructure**
+
+Ensuring that the cluster and the workload running on it are critical for industrial applications. To do this we will use [Microsoft Defender for Containers](https://learn.microsoft.com/en-us/azure/defender-for-cloud/defender-for-containers-introduction).  Defender for Containers works by having a Defender sensor running as a [DaemonSet](https://kubernetes.io/docs/concepts/workloads/controllers/daemonset/) on each node in the cluster.  In addition, it also deploys Azure Policy for Kubernetes to centralize the enforcement of Kubernetes-specific policies.
+
+#### **Onboard Cluster to Defender for Containers**
+
+>[!tip] Because you're working in a new subscription for the lab, you may need to refresh the Defender for Cloud section to have Portal reflect the screenshots below.
+
+To onboard your cluster, you'll do the following:
+
+1. In the Azure Portal, navigate to Defender for Cloud
+2. Under Management, navigate to **Environment settings**
+
+    ![screenshot of Environment settings](./img/module3-environment-settings.png)
+3. Select your subscription
+4. Under Cloud Workload Protection (CWP), navigate to **Containers > Settings**
+
+    ![screenshot of Cloud Workload Protection for Containers](./img/module3-defender-plan-containers.png)
+4. Turn on **Containers**
+5. Click **Save**
+
+#### **Wait for Defender Sensor to be deployed**
+
+It may take several minutes for the Defender for Container resources to be deployed on your Kubernetes cluster.  Run `kubectl get pods -n mdc -w` to watch the status of this being deployed.
+
+>[!tip] Wait for the pods in the **mdc** namespace to be running before proceeding to simulate the Defender alert.
+
+#### Simulate Defender Alert
+
+With the cluster onboarded to Defender for Cloud, you'll now simulate an event to generate a Defender alert.  From the terminal, run the following steps.
+
+```shell
+kubectl create namespace defendertest
+kubectl config set-context --current --namespace defendertest
+kubectl run test-shell --rm -i --tty --image ubuntu -- bash
+```
+
+Next, run the following in the container itself:
+```shell
+cp /bin/echo ./asc_alerttest_662jfi039n
+./asc_alerttest_662jfi039n testing eicar pipe
+exit
+
+```
+
+Now, go to Defender for Cloud, and clock on the **Security Alerts** blade within the Portal. In a few minutes, you should see an alert that says, "Microsoft Defender for Cloud test alert (not a threat). (Preview)".  
+
+![screenshot of Defender for Cloud test alert](./img/module3-example-alert.png)
+
+You'll next run additional code that simulates suspicious activity for the following types of activity:
+* web shell - while there may be legitimate uses of this for troubleshooting, this is suspicious behavior on a cluster
+* crypo mining - this type of activity is indicative of the cluster being used for nefarious purposes
+* network scanning tools - this indicates that a malicious actor is scanning the network from within the Kubernetes cluster
+* binary drift detection - this indicates that when an executable is being run that didn't come from the original container image
+
+From within the k3s cluster, run the following:
+
+```shell
+curl -O https://raw.githubusercontent.com/microsoft/Defender-for-Cloud-Attack-Simulation/refs/heads/main/simulation.py
+```
+
+Now, execute:
+
+```shell
+python3 simulation.py
+```
+
+At the prompt, view the types of scenarios that can be run.  Enter **6** and press enter.  The simulation will take several minutes to run.
+
+![screenshot of running attack simulation](./img/module3-defender-attack-simulation.png)
+
+After several minutes, look at the security alerts in Defender for Cloud to see additional alerts.  While these are simulated attacks running in a lab, in the real-world you'd use these alerts to trigger actions to investigate and remediate the alerts.
+
+### **Step 2 - Mark this module as complete**
+
+Update the *userName* variable with the same name you used to register for the Leaderboard and run the following command in shell to define your Leaderboard username.
+
+`userName="REPLACE_ME_OR_ELSE"; userId="${userName// /}"`
+
+Run the following command to mark this module as completed.
+
+`curl -X POST "https://jsleaderboard001-cnece0effvapgbft.westus2-01.azurewebsites.net/complete_task" -H "Content-Type: application/json" -d "{\"user_id\": \"$userId\", \"task_id\": 9}"`
+
+## **Module 3.2 - Observability**
+
+### What do we mean by observability?
 
 Observability in Kubernetes is crucial for maintaining the performance, reliability, and availability of applications. In industrial scenarios, this is crucial because the workloads being deployed are critical for worker safety, manufacturing, and a host of other reasons.  Knowing that a system is healthy or, conversely, knowing that a system is experiencing problems is key to operate Kubernetes cluster effectively and efficiently.
 
@@ -109,27 +194,36 @@ Run the following command to mark this module as completed.
 
 `curl -X POST "https://jsleaderboard001-cnece0effvapgbft.westus2-01.azurewebsites.net/complete_task" -H "Content-Type: application/json" -d "{\"user_id\": \"$userId\", \"task_id\": 8}"`
 
-## Using Azure Monitor for Cloud-Based Insights
+## **Using Azure Monitor for Cloud-Based Insights**
 
 Azure Monitor provides a comprehensive solution for collecting, analyzing, and acting on telemetry data from resources running directly in Azure as well as on-premises resources. For Arc-enabled Kubernetes clusters, Azure Monitor helps extend observability into the cloud, ensuring you have a centralized view of your cluster's health.
 
-## Enabling Container Insights
+### **Step 1 - Enable Container Insights**
 
-To enable Container Insights for this Arc-enabled Kubernetes cluster, navigate to the Azure Portal and find the cluster yuo onboarded earlier.
+To enable Container Insights for this Arc-enabled Kubernetes cluster, navigate to the Azure Portal and find the cluster you onboarded earlier.  Under the Monitoring blade, find **Insights**.
 
-Under the Monitoring blade, find **Insights**.
 
-![screenshot of Insights on Arc-enabled Kubernetes cluster](./img/module3-container-insights.png).  Click on **Configure monitoring**
+![sceenshot of Insights section of Poratl](./img/module3-configure-insights-blade.png)
+
+
+Click on **Configure monitoring**
 
 De-select **Enable Prometheus metrics** and **Enable Grafana** if checked.  Expand the Advanced Settings at the bottom of the dialogue to see the options you're presented with.  The data generated from Container Insights will be populated to the Log Analytics Workspace selected here.  In addition, note the various presets for Cost Presents.  Kubernetes generates significant amounts of data, so depending on your needs, you can alter the frequency of collection and filter the collection to only specific namespaces.
 
 Leave the default settings and click **Configure**
 
-![screenshot of configuring Container Insights](./img/module3-enable-container-insights.png)
+![screenshot of configuring Container Insights](./img/module3-insights-light-mode.png)
 
 With Container Insights, you can use Azure as the focal point for your cluster monitoring.
 
-### **Step 2 - Mark this module as complete**
+### **Step 2 - View Cluster Data in Azure Monitor**
+
+>[!alert] It may take several minutes for the data from Container Insights to be visible within the Azure Portal
+
+After Container Insights is configured on the cluster, go to the Azure Portal
+
+
+### **Step 3 - Mark this module as complete**
 
 Update the *userName* variable with the same name you used to register for the Leaderboard and run the following command in shell to define your Leaderboard username.
 
@@ -139,94 +233,121 @@ Run the following command to mark this module as completed.
 
 `curl -X POST "https://jsleaderboard001-cnece0effvapgbft.westus2-01.azurewebsites.net/complete_task" -H "Content-Type: application/json" -d "{\"user_id\": \"$userId\", \"task_id\": 9}"`
 
-===
 
-### Module 3.2 - GitOps
+## **Module 3.3 - GitOps**
 
 Ultimately the reason why you configured Arc-enabled Kubernetes clusters and monitor them is to deploy applications on the cluster.  While there are many ways to do this, GitOps provides a framework to ensure that what's deployed to a Kubernetes cluster is based on the code checked in to a Git repository.  Changes to the codebase are committed to the repository and updates are automatically applied.  One of the primary benefits of this approach is that managing the applications deployed to multiple clusters across the globe can centrally managed.  For example, imagine a manufacturer that has on-prem workloads in North America, South America, Europe, and Asia.  Manually pushing changes to each cluster may result in slight differences in what gets deployed.  Using GitOps, the workloads across these facilities can automatically be updated and they will reconcile themselves with the Git repository.  The diagram below illustrates the typical flow of developers, application operators, and cluster operators.
 
 ![GitOps diagram](./img/module3-gitops-flux2-ci-cd-arch.png)
 
-Inside VSCode, explore the contents within the **artifacts/gitops-lab**, **artifacts/rtsp**, and **artifacts/shopper-insights** directories.  These contain Helm charts used for deploying a the sample application.  While you could manually install these Helm charts, deploying through GitOps ensures that the cluster uses the underlying Git repository as the source of truth.
+### **Step 1. Browse the Manifests**
 
-=======
+Inside VSCode, explore the contents within the **artifacts/gitops-lab/rtsp** and **artifacts/gitops-lab/shopper-insights** directories.  These contain Kubernetes manifestss used for deploying a the sample application.  While you could manually apply these manifests using `kubectl`, deploying through GitOps ensures that the cluster uses the underlying Git repository as the source of truth.
 
-Next, you will explore an application that bill be deployed using GitOps.  The codebase to be deployed uses RTSP feeds to generate shopper insights.
+### **Step 2. Enable GitOps on Cluster**
 
-### Module 3.3 - Secure the infrastructure
-Ensuring that the cluster and the workload running on it are critical for industrial applications. To do this we will use [Microsoft Defender for Containers](https://learn.microsoft.com/en-us/azure/defender-for-cloud/defender-for-containers-introduction).  Defender for Containers works by having a Defender sensor running as a [DaemonSet](https://kubernetes.io/docs/concepts/workloads/controllers/daemonset/) on each node in the cluster.  In addition, it also deploys Azure Policy for Kubernetes to centralize the enforcement of Kubernetes-specific policies.
+In the Azure Portal, navigate to your Arc-enabled Kubernetes cluster.  Under Settings, go to the GitOps blade.
 
-#### Onboard Cluster to Defender for Containers
+![screenshot of Azure Portal showing GitOps create](./img/module3-gitops-create.png)
 
->[!tip] To expedite this lab, this has been enabled across the subscription
+Click on **Create**
 
-To onboard your cluster, you'll do the following:
+In the _Create a GitOps configuration_ screen, populate the following to match the below screenshot.
 
-1. In the Azure Portal, navigate to Defender for Cloud
-2. select **Settings**
-3. In the Defender plans, select **Containers > Settings**
-4. Turn on **Containers**
+    * Configuration name: gitops-lab
 
-#### Simulate Defender Alert
+    * Namespace: gitops-lab
 
-With the cluster onboarded to Defender for Cloud, you'll now simulate an event to generate a Defender alert.  From the terminal, run the following steps.
+    * Scope: Cluster 
 
-```shell
-kubectl create namespace defendertest
-kubectl config set-context --current --namespace defendertest
-kubectl run test-shell --rm -i --tty --image ubuntu -- bash
-```
+![sceenshot of GitOps configuration basic details](./img/module3-gitops-config-basics.png)
 
-Next, run the following in the container itself:
-```shell
-cp /bin/echo ./asc_alerttest_662jfi039n
-./asc_alerttest_662jfi039n testing eicar pipe
-exit
+Click **Next**
 
-```
+On the _Source_ screen, enter the following to match the sceenshot below:
 
-Now, go to Defender for Cloud, and clock on the **Security Alerts** blade within the Portal. In a few minutes, you should see an alert that says, "Microsoft Defender for Cloud test alert (not a threat). (Preview)".  
+    * Source kind: Git Repository
 
-![screenshot of Defender for Cloud test alert](./img/module3-example-alert.png)
+    * Repository URL: https://github.com/dkirby-ms/IPD2024
 
-You'll next run additional code that simulates suspicious activity for the following types of activity:
-* web shell - while there may be legitimate uses of this for troubleshooting, this is suspicious behavior on a cluster
-* crypo mining - this type of activity is indicative of the cluster being used for nefarious purposes
-* network scanning tools - this indicates that a malicious actor is scanning the network from within the Kubernetes cluster
-* binary drift detection - this indicates that when an executable is being run that didn't come from the original container image
+    * Reference type: branch
 
-From within the k3s cluster, run the following:
+    * Branch: main
 
-```shell
-curl -O https://raw.githubusercontent.com/microsoft/Defender-for-Cloud-Attack-Simulation/refs/heads/main/simulation.py
-```
+    * Repository Type: Public
 
-Now, execute:
+    * Sync interval (minutes): 10
 
-```shell
-python3 simulation.py
-```
+    * Sync timeout (minutes): 10
+    
 
-At the prompt, view the types of scenarios that can be run.  Enter **6** and press enter.  The simulation will take several minutes to run.
+![screenshot of GitOps source configuration](./img/module3-gitops-source.png)
 
-![screenshot of running attack simulation](./img/module3-defender-attack-simulation.png)
-
-After several minutes, look at the security alerts in Defender for Cloud to see additional alerts.  While these are simulated attacks running in a lab, in the real-world you'd use these alerts to trigger actions to investigate and remediate the alerts.
-
-### **Step 2 - Mark this module as complete**
-
-Update the *userName* variable with the same name you used to register for the Leaderboard and run the following command in shell to define your Leaderboard username.
-
-`userName="REPLACE_ME_OR_ELSE"; userId="${userName// /}"`
-
-Run the following command to mark this module as completed.
-
-`curl -X POST "https://jsleaderboard001-cnece0effvapgbft.westus2-01.azurewebsites.net/complete_task" -H "Content-Type: application/json" -d "{\"user_id\": \"$userId\", \"task_id\": 10}"`
+Click **Next**
 
 
+On the _Kustomizations_ screen, click on **Create**
 
+![screenshot of Kustomization](./img/module3-gitops-kustomization-blank.png)
 
+Populate the first Kustomization with the following to match the screenshot below:
 
+    * Instance name: rtsp
+
+    * Path: ./artifacts/gitops-lab/rtsp/
+
+    * Sync interval (minutes): 10
+
+    * Sync timeout (minutes): 10
+
+    * Retry interval (minutes): blank
+
+    * Prune: checked
+
+    * Force: checked
+
+![screenshot of RTSP Kustomization](./img/module3-gitops-kustomization-rtsp.png)
+
+Click on **Create** again to create a second Kustomization.
+
+>[!alert] this Kustomization depends on the kube-prometheus-stack being deployed, which you did in Module 3.2
+
+Populate the second Kustomization with the following to match the screenshot below:
+
+    * Instance name: shopper-insights
+
+    * Path: ./artifacts/gitops-lab/shopper-insights/
+
+    * Sync interval (minutes): 10
+
+    * Sync timeout (minutes): 10
+
+    * Retry interval (minutes): blank
+
+    * Prune: checked
+
+    * Force: checked
+
+    * Depends on: rtsp
+
+![screenshot of shopper-insights kustomization](./img/module3-gitops-shopper-insights.png)
+
+The Kustomizations screen should look similar to the screenshot below.
+
+![screenshot of both kustomizations](./img/module3-gitops-2-kustomizations.png)
+
+With both Kustomizations in place, click **Next**.  On the _Review + create_ screen, click **Create**.
+
+It will take several minutes for the Flux extension to be installed and the GitOps configuration to be applied.  During this time, run `kubectl get pods -A -w` to watch the flux-system pods be deployed and continue watching for pods to appear in the gitops-lab namespace.
+
+### **Step 3. Verify GitOps Compliance**
+
+>[!alert] It will take several minutes for the GitOps configuration to be fully applied
+
+![screenshot of GitOps compliance](./img/module3-gitops-compliant.png)
+
+Refresh the GitOps blade in the Portal and check the status of the deployment.  During this time, you may see a _Compliance state_ of **Non-Compliant** while the manifests are fully deployed.  After a successful deployment, the GitOps configuration will show that it's compliant.  While outside the scope of this lab, consider how using [GitOps configurations along with Azure Policy](https://learn.microsoft.com/azure/azure-arc/kubernetes/use-azure-policy-flux-2) could be used to enforce compliance across multiple clusters.
+    
 ## **Congratulations, you have reached the end of this lab.**
 
 - Call to action
