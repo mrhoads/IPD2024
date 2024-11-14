@@ -81,7 +81,7 @@ First install the CLI extension for Azure IOT Operations.
 
 Next, verify that the host is ready.
 
-`az iot ops verify-host`
+`az iot ops check`
 
 !IMAGE[Verify IOT host](./img/module2.2.1a.png)
 
