@@ -251,6 +251,8 @@ For topic, enter the name of the event hub we retrieved earlier (#2 in the scree
 
 Proceed and then save your dataflow.
 
+!IMAGE[Save dataflow](./img/save_dataflow.png)
+
 ### **Step 5 - View data on Event Hub**
 
 Return to the Azure portal and open your Event Hub topic and click Data Explorer.
