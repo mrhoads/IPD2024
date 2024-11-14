@@ -163,7 +163,11 @@ We can simulate real industrial assets such as commercial refrigeration and oven
 
 `kubectl apply -f simulator.yaml`
 
-!IMAGE [simulatordeployment.png](instructions277358/simulatordeployment.png)
+!IMAGE [simulatordeployment.png](img/ksim.png)
+
+`kubectl get pods`
+
+!IMAGE [simulatordeployment.png](img/ksvc.png)
 
 ### **Step 3 - Check topics with MQTT Explorer**
 
