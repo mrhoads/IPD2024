@@ -310,6 +310,44 @@ Populate the first Kustomization with the following to match the screenshot belo
 
 Click on **Create** again to create a second Kustomization.
 
+>[!alert] this Kustomization depends on the kube-prometheus-stack being deployed, which you did in Module 3.2
+
+Populate the second Kustomization with the following to match the screenshot below:
+
+    * Instance name: shopper-insights
+
+    * Path: ./artifacts/gitops-lab/shopper-insights/
+
+    * Sync interval (minutes): 10
+
+    * Sync timeout (minutes): 10
+
+    * Retry interval (minutes): blank
+
+    * Prune: checked
+
+    * Force: checked
+
+    * Depends on: rtsp
+
+![screenshot of shopper-insights kustomization](./img/module3-gitops-shopper-insights.png)
+
+The Kustomizations screen should look similar to the screenshot below.
+
+![screenshot of both kustomizations](./img/module3-gitops-2-kustomizations.png)
+
+With both Kustomizations in place, click **Next**.  On the _Review + create_ screen, click **Create**.
+
+It will take several minutes for the Flux extension to be installed and the GitOps configuration to be applied.  During this time, run `kubectl get pods -A -w` to watch the flux-system pods be deployed and continue watching for pods to appear in the gitops-lab namespace.
+
+### **Step 3. Verify GitOps Compliance**
+
+>[!alert] It will take several minutes for the GitOps configuration to be fully applied
+
+![screenshot of GitOps compliance](./img/module3-gitops-compliant.png)
+
+Refresh the GitOps blade in the Portal and check the status of the deployment.  During this time, you may see a _Compliance state_ of **Non-Compliant** while the manifests are fully deployed.  After a successful deployment, the GitOps configuration will show that it's compliant.  While outside the scope of this lab, consider how using [GitOps configurations along with Azure Policy](https://learn.microsoft.com/azure/azure-arc/kubernetes/use-azure-policy-flux-2) could be used to enforce compliance across multiple clusters.
+    
 ## **Congratulations, you have reached the end of this lab.**
 
 - Call to action
