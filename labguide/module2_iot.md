@@ -59,16 +59,6 @@ Before we can deploy Azure IOT Operations, we need to enable the custom location
 
 >[!hint]The password is @lab.VirtualMachine(UbuntuServer22.04).Password
 
-### **Step 5 - Mark this module as complete**
-
-Update the *userName* variable with the same name you used to register for the Leaderboard and run the following command in shell to define your Leaderboard username.
-
-`userName="REPLACE_ME_PRETTY_PLEASE"; userId="${userName// /}"`
-
-Run the following command to mark this module as completed.
-
-`curl -X POST "https://jsleaderboard001-cnece0effvapgbft.westus2-01.azurewebsites.net/complete_task" -H "Content-Type: application/json" -d "{\"user_id\": \"$userId\", \"task_id\": 5}"`
-
 ---
 
 ## **Module 2.2 - Deploy Azure IOT Operations**
@@ -129,16 +119,6 @@ Next, we can deploy the AIO solution. This somewhat lengthy command will take so
 
 >[!knowledge]For this lab, we are using an insecure listener for the MQ Broker. In a production environment, you can secure this endpoint using TLS and a certificate.
 
-### **Step 6 - Mark this module as complete**
-
-Update the *userName* variable with the same name you used to register for the Leaderboard and run the following command in shell to define your Leaderboard username.
-
-`userName="REPLACE_ME_PRETTY_PLEASE"; userId="${userName// /}"`
-
-Run the following command to mark this module as completed.
-
-`curl -X POST "https://jsleaderboard001-cnece0effvapgbft.westus2-01.azurewebsites.net/complete_task" -H "Content-Type: application/json" -d "{\"user_id\": \"$userId\", \"task_id\": 6}"`
-
 ---
 
 ## **Module 2.3 - Explore MQTT**
@@ -193,7 +173,7 @@ Now let's move on to sending data from the MQ broker downstream through a data p
 
 Azure IoT Operations is designed to bridge the gap between IT (Information Technology) and OT (Operational Technology) by providing two distinct components tailored for each group. For IT workers, Azure IoT Operations offers robust cloud-based management and analytics tools, enabling seamless integration with existing IT infrastructure and cloud services. This includes capabilities like [Azure Arc](https://learn.microsoft.com/azure/azure-arc/overview) for managing hybrid environments and [Dataflows](https://learn.microsoft.com/azure/iot-operations/connect-to-cloud/overview-dataflow) for building data pipelines. For OT workers, Azure IoT Operations provides edge solutions that ensure reliable and real-time data processing and device management on the factory floor or in other operational environments. This includes tools like [MQTT Broker](https://learn.microsoft.com/azure/iot-operations/manage-mqtt-broker/overview-iot-mq) for efficient message routing and [Data Processor](https://learn.microsoft.com/azure/iot-operations/manage-dataflows/data-processor) for on-premises data transformation. By catering to the needs of both IT and OT, Azure IoT Operations enables a unified approach to managing and optimizing industrial IoT solutions.
 
-### Dataflows
+### **Dataflows**
 
 Azure IoT Operations provides powerful tools to simplify the creation and management of dataflows, enabling seamless data movement and transformation from edge to cloud. The [Dataflows](https://learn.microsoft.com/azure/iot-operations/connect-to-cloud/overview-dataflow) feature allows you to connect various data sources, perform data operations, and enrich data, making it easier to analyze and gain insights from your IoT data. With [Data Processor](https://learn.microsoft.com/azure/iot-operations/manage-dataflows/data-processor), you can perform on-premises data transformations before sending data to its destination. These capabilities help streamline the setup of data paths, whether you need to move, transform, or enrich data, providing a robust and scalable solution for managing industrial IoT data.
 
@@ -231,7 +211,7 @@ Return to the Terminal window and run the following command.
 
 `./setRBAC.sh`
 
-!IMAGE[Setting RBAC]()
+!IMAGE[Setting RBAC](./img/setrbac.png)
 
 ### **Step 3 - Create and configure a dataflow endpoint for Azure Event Hub**
 
