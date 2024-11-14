@@ -212,7 +212,7 @@ De-select **Enable Prometheus metrics** and **Enable Grafana** if checked.  Expa
 
 Leave the default settings and click **Configure**
 
-![screenshot of configuring Container Insights](./img/module3-enable-container-insights.png)
+![screenshot of configuring Container Insights](./img/module3-insights-light-mode.png)
 
 With Container Insights, you can use Azure as the focal point for your cluster monitoring.
 
