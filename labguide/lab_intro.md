@@ -26,7 +26,7 @@ You are connected to a Windows 11 machine that has been preconfigured with devel
 
 Open Visual Studio Code to get started by clicking the icon on the desktop. 
 
-!IMAGE[h39jzhsp.jpg](instructions275881/h39jzhsp.jpg)
+!IMAGE[h39jzhsp.jpg](./img/vscode_icon.png)
 
 ---
 
