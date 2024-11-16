@@ -25,6 +25,8 @@ To onboard your cluster, you'll do the following:
 4. Turn on **Containers**
 5. Click **Save**
 
+- [] Mark complete.
+
 #### **Wait for Defender Sensor to be deployed**
 
 First, SSH to the k3s machine if you aren't in an SSH session already from the previous exercise.
@@ -32,6 +34,8 @@ First, SSH to the k3s machine if you aren't in an SSH session already from the p
     ssh 192.168.1.100
 
 >[!note] It may take several minutes for the Defender for Container resources to be deployed on your Kubernetes cluster.  Run `kubectl get pods -n mdc -w` to watch the status of this being deployed. If you don't want to wait, you can [continue on to Observability](#module-32---observability) and return later to complete the attack simulation.
+
+- [] Mark complete.
 
 #### **Simulate Defender Alert**
 
@@ -43,11 +47,15 @@ kubectl config set-context --current --namespace defendertest
 kubectl run test-shell --rm -i --tty --image ubuntu -- bash
 ```
 
+- [] Mark complete.
+
 Next, run the following in the container itself:
 ```shell
 cp /bin/echo ./asc_alerttest_662jfi039n
 ./asc_alerttest_662jfi039n testing eicar pipe
 ```
+
+- [] Mark complete.
 
 Now, go to Defender for Cloud, and clock on the **Security Alerts** blade within the Portal. In a few minutes, you should see an alert that says, "Microsoft Defender for Cloud test alert (not a threat). (Preview)".  
 
@@ -65,6 +73,8 @@ From within the k3s cluster, run the following:
 curl -O https://raw.githubusercontent.com/microsoft/Defender-for-Cloud-Attack-Simulation/refs/heads/main/simulation.py
 ```
 
+- [] Mark complete.
+
 Now, execute:
 
 ```shell
@@ -76,6 +86,8 @@ At the prompt, view the types of scenarios that can be run.  Enter **6** and pre
 ![screenshot of running attack simulation](./img/module3-defender-attack-simulation.png)
 
 After several minutes, look at the security alerts in Defender for Cloud to see additional alerts.  While these are simulated attacks running in a lab, in the real-world you'd use these alerts to trigger actions to investigate and remediate the alerts.
+
+- [] Mark complete.
 
 ---
 
@@ -99,6 +111,8 @@ Remote into the Ubuntu server using ssh.
 >[!help]The password is: @lab.VirtualMachine(UbuntuServer22.04).Password
 >[!alert]The IP address of the Ubuntu server may be 192.168.1.101
 
+- [] Mark complete.
+
 #### **Step 2 - Install Prometheus and Grafana using Helm**
 
 A common way to install these tools is with Helm and the open-source [kube-prometheus-stack](https://github.com/prometheus-community/helm-charts/blob/main/charts/kube-prometheus-stack/README.md).
@@ -107,6 +121,8 @@ A common way to install these tools is with Helm and the open-source [kube-prome
 helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
 helm repo update
 ```
+
+- [] Mark complete.
 
 There are *lots* of different ways to configure this.  Inside VSCode, open artifacts/kube-prometheus-stack-values.yaml.
 
@@ -125,6 +141,8 @@ helm install observability  --namespace observability --create-namespace prometh
 ```
 ![installing observability using Helm](./img/module3-helm-install.png)
 
+- [] Mark complete.
+
 Verify that the pods are running with the following command:
 
 ```shell
@@ -132,6 +150,8 @@ kubectl --namespace observability get pods -l "release=observability"
 ```
 
 The above command will show the pods that were created as part of the Helm chart you installed an their status.  After a short period of time, all pods should be ready.
+
+- [] Mark complete.
 
 #### **Step 3 - Familiarize yourself with Grafana**
 
@@ -142,6 +162,8 @@ kubectl port-forward -n observability svc/observability-grafana --address 0.0.0.
 ```
 
 ![screenshot of Kubernetes port forwarding](./img/module3-port-forward.png)
+
+- [] Mark complete.
 
 This command exposes a specific service, **observability-grafana** so that it can be accessed outside the cluster on port 41367, which will be forwarded to port 80.  For more information on port forwarding, refer to the [Kubernetes documentation](https://kubernetes.io/docs/tasks/access-application-cluster/port-forward-access-application-cluster/) on the topic.
 
@@ -173,13 +195,7 @@ You can also explore the data through the use of [PromQL queries](https://promet
 
 This query calculates the percentage of CPU time spent in non-idle states and subtracts it from 100 to get the idle CPU percentage.  While outside the scope of this lab, writing your own queries will be useful if you instrument your own applications and want to use custom dashboards to view metrics.
 
-#### **Step 4 - Mark this module as complete**
-
-Update the *userName* variable with the same name you used to register for the Leaderboard and run the following command in shell to define your Leaderboard username.
-
-`userName="REPLACE_ME_PRETTY_PLEASE"; userId="${userName// /}"`
-
-Run the following command to mark this module as completed.
+- [] Mark complete.
 
 `curl -X POST "https://jsleaderboard001-cnece0effvapgbft.westus2-01.azurewebsites.net/complete_task" -H "Content-Type: application/json" -d "{\"user_id\": \"$userId\", \"task_id\": 8}"`
 
@@ -203,6 +219,8 @@ Leave the default settings and click **Configure**
 
 With Container Insights, you can use Azure as the focal point for your cluster monitoring.
 
+- [] Mark complete.
+
 #### **Step 2 - View Cluster Data in Azure Monitor**
 
 >[!alert] It may take several minutes for the data from Container Insights to be visible within the Azure Portal
@@ -215,6 +233,8 @@ Finally, explore the Logs, Metrics, and Workbooks sections in the Azure Portal u
 
 ![screenshot of Monitoring section for cluster](./img/module3-monitoring.png)
 
+- [] Mark complete.
+
 ---
 
 ### **Module 3.3 - GitOps**
@@ -226,6 +246,8 @@ Ultimately the reason why you configured Arc-enabled Kubernetes clusters and mon
 #### **Step 1 - Browse the Manifests**
 
 Inside VSCode, explore the contents within the **artifacts/gitops-lab/rtsp** and **artifacts/gitops-lab/shopper-insights** directories.  These contain Kubernetes manifestss used for deploying a the sample application.  While you could manually apply these manifests using `kubectl`, deploying through GitOps ensures that the cluster uses the underlying Git repository as the source of truth.
+
+- [] Mark complete.
 
 #### **Step 2 - Enable GitOps on Cluster**
 
@@ -322,6 +344,8 @@ With both Kustomizations in place, click **Next**.  On the _Review + create_ scr
 
 It will take several minutes for the Flux extension to be installed and the GitOps configuration to be applied.  During this time, run `kubectl get pods -A -w` to watch the flux-system pods be deployed and continue watching for pods to appear in the gitops-lab namespace.
 
+- [] Mark complete.
+
 #### **Step 3 - Verify GitOps Compliance**
 
 >[!alert] It will take several minutes for the GitOps configuration to be fully applied
@@ -329,6 +353,8 @@ It will take several minutes for the Flux extension to be installed and the GitO
 ![screenshot of GitOps compliance](./img/module3-gitops-compliant.png)
 
 Refresh the GitOps blade in the Portal and check the status of the deployment.  During this time, you may see a _Compliance state_ of **Non-Compliant** while the manifests are fully deployed.  After a successful deployment, the GitOps configuration will show that it's compliant.  While outside the scope of this lab, consider how using [GitOps configurations along with Azure Policy](https://learn.microsoft.com/azure/azure-arc/kubernetes/use-azure-policy-flux-2) could be used to enforce compliance across multiple clusters.
+
+- [] Mark complete.
 
 ## **Congratulations, you have reached the end of this lab.**
 

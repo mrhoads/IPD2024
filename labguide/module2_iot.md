@@ -33,7 +33,7 @@ Great, now let's check the running pods.
 
 If everything looks good then this cluster can be onboarded to Azure with Azure Arc. Login to Azure with a device code using the following command. Use the Azure credentials available in the lab guide "Resources" tab.
 
-`az login --use-device-code`
+- [] `az login --use-device-code`
 
 !IMAGE[Azure device code login](img/step2c.png)
 
@@ -43,7 +43,7 @@ If everything looks good then this cluster can be onboarded to Azure with Azure 
 
 Once logged in, use the following command to onboard the kubernetes cluster to Azure with Azure Arc.
 
-`az connectedk8s connect --name arc-k3s --resource-group rg-Edge --enable-oidc-issuer --enable-workload-identity`
+- [] `az connectedk8s connect --name arc-k3s --resource-group rg-Edge --enable-oidc-issuer --enable-workload-identity`
 
 >[!alert]You may need to run this command again if you see an error message trying to download kubectl.
 
@@ -59,7 +59,7 @@ It will take several minutes to onboard the cluster. In the meantime, you can op
 
 Before we can deploy Azure IOT Operations, we need to enable the custom locations feature on the cluster. Run this script to quickly enable the feature.
 
-`./aio-prep.sh`
+- [] `./aio-prep.sh`
 
 >[!hint]The password is @lab.VirtualMachine(UbuntuServer22.04).Password
 
@@ -71,11 +71,11 @@ Before we can deploy Azure IOT Operations, we need to enable the custom location
 
 First install the CLI extension for Azure IOT Operations.
 
-`az extension add --upgrade --name azure-iot-ops`
+- [] `az extension add --upgrade --name azure-iot-ops`
 
 Next, verify that the host is ready.
 
-`az iot ops check`
+- [] `az iot ops check`
 
 !IMAGE[Verify IOT host](./img/module2.2.1a.png)
 
@@ -85,7 +85,7 @@ We will need some cloud resources in Azure to use with Azure IoT Operations incl
 
 Next get the storage account and store it in an environment variable for ease of use in next steps.
 
-`export STORAGE=$(az storage account list --resource-group rg-Edge -o tsv --query [].name)`
+- [] `export STORAGE=$(az storage account list --resource-group rg-Edge -o tsv --query [].name)`
 
 >[!hint]If you want to see the values of the variables we just created, you can "echo" them ```echo $STORAGE```
 
@@ -95,13 +95,13 @@ Next get the storage account and store it in an environment variable for ease of
 
 Now that we have these cloud resources, we can create a schema registry for Azure IoT Operations.
 
-`az iot ops schema registry create --name schema@lab.LabInstance.GlobalId --resource-group rg-Edge --registry-namespace $STORAGE --sa-resource-id $(az storage account show --name $STORAGE --resource-group rg-Edge -o tsv --query id)`
+- [] `az iot ops schema registry create --name schema@lab.LabInstance.GlobalId --resource-group rg-Edge --registry-namespace $STORAGE --sa-resource-id $(az storage account show --name $STORAGE --resource-group rg-Edge -o tsv --query id)`
 
 !IMAGE[Create schema registry](./img/createschemareg.png)
 
 We will need the id of the resource we just created in a later step.
 
-`export SCHEMA_REGISTRY_RESOURCE_ID=$(az iot ops schema registry show --name schema@lab.LabInstance.GlobalId --resource-group rg-Edge -o tsv --query id)`
+- [] `export SCHEMA_REGISTRY_RESOURCE_ID=$(az iot ops schema registry show --name schema@lab.LabInstance.GlobalId --resource-group rg-Edge -o tsv --query id)`
 
 >[!knowledge] Schemas are documents that describe the format of a message and its contents to enable processing and contextualization. The schema registry is a synchronized repository in the cloud and at the edge. The schema registry stores the definitions of messages coming from edge assets, and then exposes an API to access those schemas at the edge. The schema registry is backed by a cloud storage account. This storage account was pre-created as part of the lab setup.
 
@@ -109,7 +109,7 @@ We will need the id of the resource we just created in a later step.
 
 Now you can initialize the cluster for the Azure IoT Operations services. This command  will take a few minutes to complete.
 
-`az iot ops init --cluster arc-k3s --resource-group rg-Edge`
+- [] `az iot ops init --cluster arc-k3s --resource-group rg-Edge`
 
 !IMAGE[iot init](./img/iotinit.png)
 
@@ -117,7 +117,7 @@ Now you can initialize the cluster for the Azure IoT Operations services. This c
 
 Next, we can deploy the AIO solution. This somewhat lengthy command will take some time to type out.
 
-`az iot ops create --name aio-ignite --cluster arc-k3s --resource-group rg-Edge --sr-resource-id $SCHEMA_REGISTRY_RESOURCE_ID --broker-frontend-replicas 1 --broker-frontend-workers 1 --broker-backend-part 1 --broker-backend-workers 1 --broker-backend-rf 2 --broker-mem-profile Low --add-insecure-listener true`
+- [] `az iot ops create --name aio-ignite --cluster arc-k3s --resource-group rg-Edge --sr-resource-id $SCHEMA_REGISTRY_RESOURCE_ID --broker-frontend-replicas 1 --broker-frontend-workers 1 --broker-backend-part 1 --broker-backend-workers 1 --broker-backend-rf 2 --broker-mem-profile Low --add-insecure-listener true`
 
 !IMAGE[iot create](./img/iotcreate.png)
 
@@ -135,7 +135,7 @@ We can use a local MQTT client to easily check that the [MQ Broker](https://lear
 
 First let's identity the service where the MQ broker is listening. Run the following command.
 
-`kubectl get svc -n azure-iot-operations`
+- [] `kubectl get svc -n azure-iot-operations`
 
 !IMAGE[Kubectl get svc](./img/ksvc.png)
 
@@ -145,11 +145,11 @@ First let's identity the service where the MQ broker is listening. Run the follo
 
 We can simulate real industrial assets such as commercial refrigeration and oven units, HVAC systems, Deploy a workload that will simulate industrial assets and send data to the MQ Broker.
 
-`kubectl apply -f simulator.yaml`
+- [] `kubectl apply -f simulator.yaml`
 
 !IMAGE [simulatordeployment.png](img/ksim.png)
 
-`kubectl get pods`
+- [] `kubectl get pods`
 
 !IMAGE [simulatordeployment.png](img/ksvc.png)
 
@@ -169,7 +169,7 @@ Our simulator is publishing messages to the **"iot/devices" topic** prefix. You 
 
 > [!knowledge] Azure IoT Operations publishes its own self test messages to the azedge topic. This is useful to confirm that the MQ Broker is available and receiving messages.
 
-Now let's move on to sending data from the MQ broker downstream through a data pipeline.
+- [] Now let's move on to sending data from the MQ broker downstream through a data pipeline.
 
 ---
 
@@ -203,7 +203,7 @@ Click on Get Started and then on View unassigned instances.
 
 !IMAGE[View unassigned](./img/viewunassigned.png)
 
-And select your instance from the list.
+- [] And select your instance from the list.
 
 !IMAGE[View instance](./img/clickinstance.png)
 
@@ -213,7 +213,7 @@ To enable Azure IoT Operations to send and receive data from Event Hub, we need 
 
 Return to the Terminal window and run the following command.
 
-`./setRBAC.sh`
+- [] `./setRBAC.sh`
 
 !IMAGE[Setting RBAC](./img/setrbac.png)
 
@@ -231,7 +231,7 @@ Now return to the Azure IoT Operations Experience portal and click on Dataflow E
 
 !IMAGE[Create dataflow endpoint](./img/newdceh.png)
 
-Enter a name for the dataflow endpoint and enter the Event Hub namespace name (#1) into the service endpoint prefix. Press Apply when finished.
+- [] Enter a name for the dataflow endpoint and enter the Event Hub namespace name (#1) into the service endpoint prefix. Press Apply when finished.
 
 !IMAGE[Create dataflow endpoint detail](./img/create_endpoint_namespace.png)
 
@@ -253,7 +253,7 @@ For topic, enter the name of the event hub we retrieved earlier (#2 in the scree
 
 !IMAGE[Topic](./img/ep3.png)
 
-Proceed and then save your dataflow.
+- [] Proceed and then save your dataflow.
 
 !IMAGE[Save dataflow](./img/save_dataflow.png)
 
@@ -263,7 +263,7 @@ Return to the Azure portal and open your Event Hub topic and click Data Explorer
 
 !IMAGE[Data explorer](./img/ehde.png)
 
-Click view events to view the events from MQTT that have been sent to Event Hub.
+- [] Click view events to view the events from MQTT that have been sent to Event Hub.
 
 !IMAGE[View events](./img/viewevents.png)
 
@@ -271,11 +271,11 @@ Click view events to view the events from MQTT that have been sent to Event Hub.
 
 Update the *userName* variable with the same name you used to register for the Leaderboard and run the following command in shell to define your Leaderboard username.
 
-`userName="REPLACE_ME_PRETTY_PLEASE"; userId="${userName// /}"`
+- [] `userName="REPLACE_ME_PRETTY_PLEASE"; userId="${userName// /}"`
 
 Run the following command to mark this module as completed.
 
-`curl -X POST "https://jsleaderboard001-cnece0effvapgbft.westus2-01.azurewebsites.net/complete_task" -H "Content-Type: application/json" -d "{\"user_id\": \"$userId\", \"task_id\": 7}"`
+- [] `curl -X POST "https://jsleaderboard001-cnece0effvapgbft.westus2-01.azurewebsites.net/complete_task" -H "Content-Type: application/json" -d "{\"user_id\": \"$userId\", \"task_id\": 7}"`
 
 ---
 
