@@ -34,7 +34,7 @@ Click on the notebook _**1-Register.ipynb**_ to open it, then follow along with 
 
 Click on the notebook _**2-ComputerVision.ipynb**_ to open it, then follow the along with the instructions.
 
-### **Notebook 3 - Counting objects**
+#### **Notebook 3 - Counting objects**
 
 Click on the notebook _**3-CountingObjects.ipynb**_ to open it, then follow the along with the instructions.
 
