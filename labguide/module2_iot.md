@@ -12,7 +12,7 @@ In this lab, you have access to an Ubuntu 22.04 LTS server with 8 processors and
 
 ### **Step 1 - Remote into the Ubuntu server using ssh**
 
-`ssh 192.168.1.100`
+- [] `ssh 192.168.1.100`
 
 >[!help]The password is: +++@lab.VirtualMachine(UbuntuServer22.04).Password+++
 >[!alert]The IP address of the Ubuntu server may be 192.168.1.101
@@ -21,13 +21,13 @@ In this lab, you have access to an Ubuntu 22.04 LTS server with 8 processors and
 
 Once you're in, use kubectl to check the status of the nodes of the cluster.
 
-[] `kubectl get nodes`
+- [] `kubectl get nodes`
 
 !IMAGE[kubectl get nodes](img/step2a.png)
 
 Great, now let's check the running pods.
 
-[] `kubectl get pods -A`
+- [] `kubectl get pods -A`
 
 !IMAGE[kubectl get pods](img/step2b.png)
 
