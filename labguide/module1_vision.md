@@ -1,6 +1,6 @@
 ## **Lab 1 - Computer vision in action**
 
-### **Introduction to Computer Vision**
+## **Introduction to Computer Vision**
 
 Computer vision is a field of artificial intelligence that enables computers to interpret and make decisions based on visual data from the world. By leveraging advanced algorithms and models, computer vision systems can perform tasks such as image classification, object detection, and facial recognition.
 
