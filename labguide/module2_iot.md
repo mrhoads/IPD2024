@@ -1,5 +1,7 @@
 # **Lab 2 - Edge-to-Cloud Industrial IoT**
 
+Azure IoT Operations is a comprehensive suite of tools and services designed to streamline the management and operation of IoT devices and data. It bridges the gap between IT and OT by providing robust cloud-based management, analytics tools, and edge solutions for real-time data processing. With features like [MQTT Broker](https://learn.microsoft.com/azure/iot-operations/manage-mqtt-broker/overview-iot-mq) for efficient message routing, [Dataflows](https://learn.microsoft.com/azure/iot-operations/connect-to-cloud/overview-dataflow) for seamless data movement, and Azure Arc for hybrid environment management, Azure IoT Operations enables the creation of scalable and reliable industrial IoT solutions.
+
 In this lab, you will explore the [MQ Broker component](https://learn.microsoft.com/azure/iot-operations/manage-mqtt-broker/overview-iot-mq) of Azure IoT Operations, which is essential for managing and routing messages between IoT devices. The MQ Broker facilitates communication by using MQTT (Message Queuing Telemetry Transport), a lightweight and efficient messaging protocol. You will learn how to set up and interact with the MQ Broker, deploy data simulators, and use tools like MQTT Explorer to monitor and analyze the messages being exchanged. This hands-on experience will provide you with a deeper understanding of how Azure IoT Operations can be leveraged to build robust and scalable industrial IoT solution
 
 [MQTT (Message Queuing Telemetry Transport)](https://en.wikipedia.org/wiki/MQTT) is a lightweight messaging protocol that is highly effective in AI use cases due to its efficient bandwidth usage and low latency. It enables seamless communication between IoT devices and AI systems, allowing for real-time data collection and processing. This is particularly powerful in scenarios such as predictive maintenance, smart cities, and autonomous vehicles, where timely and reliable data transmission is crucial. By leveraging MQTT, AI applications can receive continuous streams of data from various sensors and devices, facilitating rapid decision-making and enhancing the overall intelligence and responsiveness of the system.
@@ -47,9 +49,11 @@ Once logged in, use the following command to onboard the kubernetes cluster to A
 
 >[!tip]The resource group "rg-Edge" has been pre-created for this lab.
 
-It will take a few minutes to onboard the cluster. In the meantime, you can open Azure portal and navigate to your resource group. When the cluster is finished onboarding, you will be able to view it in the portal.
+It will take several minutes to onboard the cluster. In the meantime, you can open Azure portal and navigate to your resource group. When the cluster is finished onboarding, you will be able to view it in the portal.
 
 !IMAGE[Arc K8s in portal](./img/arck8s.png)
+
+>[!knowledge]While you wait, learn more about [managing data from industrial assets](https://learn.microsoft.com/azure/iot-operations/discover-manage-assets/overview-manage-assets) with Azure IoT Operations.
 
 ### **Step 4 - Enable the custom locations feature of the cluster**
 
