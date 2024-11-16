@@ -271,11 +271,11 @@ Return to the Azure portal and open your Event Hub topic and click Data Explorer
 
 Update the *userName* variable with the same name you used to register for the Leaderboard and run the following command in shell to define your Leaderboard username.
 
-- [] `userName="REPLACE_ME_PRETTY_PLEASE"; userId="${userName// /}"`
+- [] `userName="replace"`
 
 Run the following command to mark this module as completed.
 
-- [] `curl -X POST "https://jsleaderboard001-cnece0effvapgbft.westus2-01.azurewebsites.net/complete_task" -H "Content-Type: application/json" -d "{\"user_id\": \"$userId\", \"task_id\": 7}"`
+- [] `userId="${userName// /}; curl -X POST "https://jsleaderboard001-cnece0effvapgbft.westus2-01.azurewebsites.net/complete_task" -H "Content-Type: application/json" -d "{\"user_id\": \"$userId\", \"task_id\": 7}"`
 
 ---
 
